@@ -1,0 +1,71 @@
+{
+  "name": "sugarcrm-developers/php-rest-client",
+  "description": "An SDK for interacting with Sugar's REST v10+ API.",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Mike Russell",
+      "email": "mrussell@sugarcrm.com",
+      "role": "Developer"
+    }
+  ],
+  "keywords": [
+    "sugarcrm",
+    "sugar",
+    "crm",
+    "rest",
+    "sdk",
+    "v10",
+    "api"
+  ],
+  "require": {
+    "php": ">=8.0",
+    "michaelj2324/php-rest-client": "3.x-dev"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "9.*",
+    "friendsofphp/php-cs-fixer": "^v3",
+    "colinodell/psr-testlogger": "^1",
+    "rector/rector": "1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sugarcrm\\REST\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Sugarcrm\\REST\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/flex": true
+    }
+  },
+  "scripts": {
+    "test": [
+      "phpunit"
+    ],
+    "test:coverage": [
+      "@putenv XDEBUG_MODE=coverage",
+      "phpunit --coverage-clover=\"coverage/clover.xml\""
+    ],
+    "test:coverage-html": [
+      "@putenv XDEBUG_MODE=coverage",
+      "phpunit --coverage-html=\"coverage\""
+    ],
+    "quality:check": [
+      "php vendor/bin/php-cs-fixer fix . --rules=@PER-CS2.0 --dry-run"
+    ],
+    "quality:fix": [
+      "php vendor/bin/php-cs-fixer fix . --rules=@PER-CS2.0"
+    ],
+    "quality:diff": [
+      "php vendor/bin/php-cs-fixer fix . --rules=@PER-CS2.0 --dry-run --diff"
+    ],
+    "docs": [
+      "php ./tools/phpDocumentor -d ./src -t ./docs/"
+    ]
+  }
+}
