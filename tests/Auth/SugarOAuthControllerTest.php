@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use ColinODell\PsrTestLogger\TestLogger;
-use Sugarcrm\REST\Endpoint\OAuth2Sudo;
 use Sugarcrm\REST\Endpoint\OAuth2Token;
 use Sugarcrm\REST\Endpoint\Provider\SugarEndpointProvider;
 use Sugarcrm\REST\Tests\Stubs\Auth\SugarOAuthStub;

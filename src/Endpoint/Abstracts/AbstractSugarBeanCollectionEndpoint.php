@@ -8,7 +8,6 @@ namespace Sugarcrm\REST\Endpoint\Abstracts;
 
 use Sugarcrm\REST\Endpoint\SugarBean;
 use MRussell\REST\Endpoint\Abstracts\AbstractModelEndpoint;
-use MRussell\REST\Endpoint\Interfaces\EndpointInterface;
 use Sugarcrm\REST\Endpoint\Traits\FieldsDataTrait;
 use Sugarcrm\REST\Endpoint\Traits\ModuleAwareTrait;
 
@@ -34,7 +33,6 @@ abstract class AbstractSugarBeanCollectionEndpoint extends AbstractSugarCollecti
 
     /**
      * Order By statement
-     * @var string
      */
     protected string $_orderBy = '';
 
@@ -54,7 +52,6 @@ abstract class AbstractSugarBeanCollectionEndpoint extends AbstractSugarCollecti
 
     /**
      * Get the orderBy Property on the Endpoint
-     * @return string
      */
     public function getOrderBy(): string
     {

@@ -6,9 +6,7 @@
 
 namespace Sugarcrm\REST\Endpoint;
 
-use MRussell\REST\Endpoint\Interfaces\EndpointInterface;
 use MRussell\REST\Exception\Endpoint\InvalidRequest;
-use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarEndpoint;
 
 /**
  * Ping Endpoint allows for easily checking access to Sugar 7 API

@@ -8,7 +8,6 @@ namespace Sugarcrm\REST\Endpoint;
 
 use GuzzleHttp\Psr7\Response;
 use MRussell\REST\Endpoint\Data\AbstractEndpointData;
-use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarBeanCollectionEndpoint;
 use Sugarcrm\REST\Endpoint\Data\FilterData;
 
 /**
@@ -34,14 +33,8 @@ class ModuleFilter extends SugarBeanCollection
         ],
     ];
 
-    /**
-     * @var FilterData
-     */
     protected FilterData $filter;
 
-    /**
-     * @var int
-     */
     protected int $_totalCount;
 
     private bool $_count = false;
@@ -84,7 +77,6 @@ class ModuleFilter extends SugarBeanCollection
 
     /**
      * Configure the Filter Parameters for the Filter API
-     * @return FilterData
      */
     public function filter(bool $reset = false): FilterData
     {
@@ -139,7 +131,6 @@ class ModuleFilter extends SugarBeanCollection
 
     /**
      * Get the total count
-     * @return int
      */
     public function getTotalCount(): int
     {

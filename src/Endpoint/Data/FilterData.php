@@ -8,7 +8,6 @@ namespace Sugarcrm\REST\Endpoint\Data;
 
 use MRussell\REST\Exception\Endpoint\InvalidRequest;
 use MRussell\REST\Endpoint\Abstracts\AbstractSmartEndpoint;
-use MRussell\REST\Endpoint\Data\AbstractEndpointData;
 use MRussell\REST\Endpoint\Data\DataInterface;
 use MRussell\REST\Endpoint\Traits\ArrayObjectAttributesTrait;
 use MRussell\REST\Endpoint\Traits\ClearAttributesTrait;
@@ -89,7 +88,6 @@ class FilterData extends AbstractExpression implements DataInterface
 
     /**
      * Return the entire Data array
-     * @param bool $compile
      */
     public function toArray(bool $compile = true): array
     {

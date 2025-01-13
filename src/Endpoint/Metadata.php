@@ -6,9 +6,7 @@
 
 namespace Sugarcrm\REST\Endpoint;
 
-use MRussell\REST\Endpoint\Interfaces\EndpointInterface;
 use MRussell\REST\Exception\Endpoint\InvalidRequest;
-use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarEndpoint;
 
 /**
  * Metadata Endpoint provides access to the defined Metadata of the system

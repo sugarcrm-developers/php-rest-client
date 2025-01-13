@@ -6,19 +6,18 @@
 
 namespace Sugarcrm\REST\Client;
 
+use MRussell\REST\Auth\AuthControllerInterface;
 use Psr\Http\Message\MessageInterface;
+use Sugarcrm\REST\Endpoint\Generic;
 use Sugarcrm\REST\Endpoint\Ping;
+use Sugarcrm\REST\Endpoint\Smart;
 use Sugarcrm\REST\Endpoint\SugarBean;
 use Sugarcrm\REST\Endpoint\ModuleFilter;
 use Sugarcrm\REST\Endpoint\Search;
 use Sugarcrm\REST\Endpoint\Metadata;
 use Sugarcrm\REST\Endpoint\Me;
-use Sugarcrm\REST\Endpoint\Enum;
 use Sugarcrm\REST\Endpoint\Bulk;
 use Sugarcrm\REST\Endpoint\OAuth2Token;
-use Sugarcrm\REST\Endpoint\OAuth2Refresh;
-use Sugarcrm\REST\Endpoint\OAuth2Logout;
-use Sugarcrm\REST\Endpoint\OAuth2Sudo;
 use Sugarcrm\REST\Endpoint\Note;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
@@ -30,18 +29,18 @@ use Sugarcrm\REST\Endpoint\Provider\SugarEndpointProvider;
  * The default Sugar 7 REST v10 API implementation
  * @package Sugarcrm\REST\Client\Abstracts\AbstractClient
  * @method Ping ping()
- * @method SugarBean module(string $module = '', string $record_id = '')
+ * @method SugarBean module(string $module = '', string $id = '')
  * @method ModuleFilter list(string $module = '')
  * @method Search search()
  * @method Metadata metadata(string $module = '')
  * @method Me me()
- * @method Enum enum(string $module = '', string $field = '')
+ * @method Generic enum(string $module = '', string $field = '')
  * @method Bulk bulk()
  * @method OAuth2Token oauth2Token() - Use login()
- * @method OAuth2Refresh oauth2Refresh() - Use refresh()
- * @method OAuth2Logout oauth2Logout() - Use logout()
- * @method OAuth2Sudo oauth2Sudo() - Use sudo()
- * @method Note Note(string $id = null) -
+ * @method OAuth2Token oauth2Refresh() - Use refresh()
+ * @method Generic oauth2Logout() - Use logout()
+ * @method Smart oauth2Sudo(string $user = '') - Use sudo()
+ * @method Note note(string $id = null) -
  */
 class SugarApi extends AbstractClient implements PlatformAwareInterface
 {
@@ -55,20 +54,19 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
 
     public const API_URL = '/rest/v%s/';
 
-    protected static $_DEFAULT_PLATFORM = self::PLATFORM_BASE;
+    protected static string $_DEFAULT_PLATFORM = self::PLATFORM_BASE;
 
     /**
      * The API Version to be used.
      * Defaults to 10 (for v10), but can be any number above 10,
      * since customizing API allows for additional versioning to allow for duplicate endpoints
-     * @var string
      */
-    protected $version = self::API_VERSION;
+    protected string $version = self::API_VERSION;
 
     /**
      * @var SugarOAuthController
      */
-    protected $Auth;
+    protected AuthControllerInterface $auth;
 
     /**
      * Given a sugarcrm server/instance generate the Rest/v10 API Url
@@ -147,6 +145,7 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
             $EP = $Auth->getActionEndpoint($action);
             $EP->setBaseUrl($this->apiURL);
         }
+
         return $this;
     }
 
@@ -193,9 +192,8 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
 
     /**
      * Helper Method to Refresh Authentication Token
-     * @return bool
      */
-    public function refreshToken()
+    public function refreshToken(): bool
     {
         $creds = $this->getAuth()->getCredentials();
         if (isset($creds['client_id']) && isset($creds['client_secret'])) {
@@ -219,16 +217,15 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
      * @param $user string
      * @codeCoverageIgnore
      */
-    public function sudo($user): bool
+    public function sudo(string $user): bool
     {
         return $this->getAuth()->sudo($user);
     }
 
     /**
      * Check if authenticated, and attempt Refresh/Login if not
-     * @return bool
      */
-    public function isAuthenticated()
+    public function isAuthenticated(): bool
     {
         $Auth = $this->getAuth();
         $ret = true;

@@ -2,8 +2,6 @@
 
 namespace Sugarcrm\REST\Endpoint;
 
-use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarBeanEndpoint;
-
 class ModuleLoader extends SugarBean
 {
     public const ACTION_INSTALL = 'install';

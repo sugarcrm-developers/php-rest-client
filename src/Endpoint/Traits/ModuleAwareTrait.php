@@ -10,9 +10,6 @@ use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarBeanEndpoint;
  */
 trait ModuleAwareTrait
 {
-    /**
-     * @var string
-     */
     protected string $_beanName = '';
 
     public function getModule(): string

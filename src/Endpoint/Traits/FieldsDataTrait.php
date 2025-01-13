@@ -3,7 +3,6 @@
 namespace Sugarcrm\REST\Endpoint\Traits;
 
 use ArrayAccess;
-use MRussell\REST\Endpoint\Data\DataInterface;
 use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarBeanCollectionEndpoint;
 
 /**
@@ -72,9 +71,6 @@ trait FieldsDataTrait
         return $this->_view;
     }
 
-    /**
-     * @param array|\ArrayAccess|DataInterface $data
-     */
     protected function configureFieldsDataProps(array|\ArrayAccess $data): array|ArrayAccess
     {
         $fields = $this->getFields();

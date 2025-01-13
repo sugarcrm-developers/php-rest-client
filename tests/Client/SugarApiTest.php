@@ -8,16 +8,11 @@ namespace Sugarcrm\REST\Tests\Client;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\REST\Endpoint\Bulk;
-use Sugarcrm\REST\Endpoint\Collection;
 use Sugarcrm\REST\Endpoint\Generic;
 use Sugarcrm\REST\Endpoint\Smart;
 use Sugarcrm\REST\Endpoint\SugarBean;
-use Sugarcrm\REST\Endpoint\Enum;
 use Sugarcrm\REST\Endpoint\Me;
 use Sugarcrm\REST\Endpoint\ModuleFilter;
-use Sugarcrm\REST\Endpoint\OAuth2Logout;
-use Sugarcrm\REST\Endpoint\OAuth2Refresh;
-use Sugarcrm\REST\Endpoint\OAuth2Sudo;
 use Sugarcrm\REST\Endpoint\OAuth2Token;
 use Sugarcrm\REST\Endpoint\Ping;
 use Sugarcrm\REST\Endpoint\Search;

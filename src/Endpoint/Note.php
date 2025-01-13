@@ -2,8 +2,6 @@
 
 namespace Sugarcrm\REST\Endpoint;
 
-use GuzzleHttp\Psr7\Stream;
-use MRussell\REST\Endpoint\Data\DataInterface;
 use MRussell\REST\Exception\Endpoint\InvalidData;
 use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
@@ -122,7 +120,6 @@ class Note extends SugarBean
     }
 
     /**
-     * @return array|Stream|mixed|DataInterface|string|null
      * @throws InvalidData
      */
     protected function configurePayload(): mixed

@@ -99,7 +99,6 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
 
     /**
      * All the extra actions that can be done on a Sugar Bean
-     * @var array
      */
     protected static array $_DEFAULT_SUGAR_BEAN_ACTIONS = [
         self::BEAN_ACTION_FAVORITE => "PUT",

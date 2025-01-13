@@ -7,7 +7,6 @@
 namespace Sugarcrm\REST\Endpoint;
 
 use MRussell\REST\Endpoint\Interfaces\ModelInterface;
-use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarCollectionEndpoint;
 
 /**
  * The Sugar 7 REST Api Search Endpoint

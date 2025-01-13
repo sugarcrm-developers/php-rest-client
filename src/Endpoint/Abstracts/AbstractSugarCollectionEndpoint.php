@@ -38,19 +38,16 @@ abstract class AbstractSugarCollectionEndpoint extends CollectionEndpoint implem
 
     /**
      * Current record offset to query for
-     * @var int
      */
     protected int $_offset = 0;
 
     /**
      * Max number of records to return
-     * @var int
      */
     protected int $_max_num = self::DEFAULT_LIMIT;
 
     /**
      * Next offset to pass
-     * @var int
      */
     protected int $_next_offset = 0;
 
@@ -87,7 +84,6 @@ abstract class AbstractSugarCollectionEndpoint extends CollectionEndpoint implem
 
     /**
      * Get the configured offset
-     * @return int
      */
     public function getOffset(): int
     {
@@ -107,7 +103,6 @@ abstract class AbstractSugarCollectionEndpoint extends CollectionEndpoint implem
 
     /**
      * Get the Limit (max_num) property of the Collection
-     * @return int
      */
     public function getLimit(): int
     {
@@ -188,7 +183,6 @@ abstract class AbstractSugarCollectionEndpoint extends CollectionEndpoint implem
 
     /**
      * Check if collection has more data to load
-     * @return bool
      */
     public function hasMore(): bool
     {

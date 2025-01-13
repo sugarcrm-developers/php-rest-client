@@ -13,7 +13,7 @@ use Sugarcrm\REST\Client\SugarApi;
 
 class Client extends SugarApi
 {
-    protected $server = 'http://phpunit.tests';
+    protected string $server = 'http://phpunit.tests';
 
     /**
      * @var MockHandler
@@ -25,7 +25,7 @@ class Client extends SugarApi
      */
     public $container = [];
 
-    protected function initHttpHandlerStack()
+    protected function initHttpHandlerStack(): void
     {
         $this->mockResponses = new MockHandler();
         $handler = HandlerStack::create($this->mockResponses);
@@ -33,11 +33,10 @@ class Client extends SugarApi
         $this->setHandlerStack($handler);
     }
 
-    protected function configureAuth()
+    protected function configureAuth(): void
     {
         parent::configureAuth();
         $this->getHandlerStack()->remove('history');
         $this->getHandlerStack()->after('configureAuth', Middleware::history($this->container), 'history');
-        return $this;
     }
 }

@@ -6,7 +6,6 @@
 
 namespace Sugarcrm\REST\Endpoint;
 
-use MRussell\REST\Endpoint\Data\EndpointData;
 use MRussell\REST\Endpoint\Data\ValidatedEndpointData;
 use Sugarcrm\REST\Auth\SugarOAuthController;
 use Sugarcrm\REST\Endpoint\Abstracts\AbstractSmartSugarEndpoint;
