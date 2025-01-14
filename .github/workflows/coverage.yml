@@ -2,7 +2,7 @@ name: PR Checks
 
 on:
   push:
-    branches: [ "master", "3.x" ]
+    branches: [ "main", "develop" ]
 
 permissions: read-all
 
