@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/sugarcrm-developers/php-rest-client/badge.svg?branch=main)](https://coveralls.io/github/sugarcrm-developers/php-rest-client?branch=main)
+![Packagist Downloads](https://img.shields.io/packagist/dt/sugarcrm-developers/php-rest-client)
+![Packagist Version](https://img.shields.io/packagist/v/sugarcrm-developers/php-rest-client)
 # SugarCRM PHP REST Client
 
 ## Overview
