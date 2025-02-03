@@ -14,7 +14,7 @@ use Sugarcrm\REST\Tests\Stubs\Client\Client;
 /**
  * Class PingTest
  * @package Sugarcrm\REST\Tests\Endpoint
- * @coversDefaultClass Sugarcrm\REST\Endpoint\Ping
+ * @coversDefaultClass \Sugarcrm\REST\Endpoint\Ping
  * @group PingTest
  */
 class PingTest extends TestCase
@@ -42,6 +42,6 @@ class PingTest extends TestCase
         $Ping->setClient($this->client);
         $Ping->setBaseUrl('http://localhost/rest/v11');
         $Ping->whattimeisit();
-        $this->assertEquals('http://localhost/rest/v11/ping/whattimeisit', $this->client->mockResponses->getLastRequest()->getUri());
+        $this->assertEquals('http://localhost/rest/v11/ping/whattimeisit', (string)$this->client->mockResponses->getLastRequest()->getUri());
     }
 }

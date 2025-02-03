@@ -66,7 +66,7 @@ class Me extends ModelEndpoint implements SugarEndpointInterface
     {
         parent::__construct($urlArgs, $properties);
         foreach (static::$_DEFAULT_SUGAR_USER_ACTIONS as $action => $method) {
-            $this->actions[$action] = $method;
+            $this->_actions[$action] = $method;
         }
     }
 
@@ -115,7 +115,7 @@ class Me extends ModelEndpoint implements SugarEndpointInterface
                 case self::USER_ACTION_DELETE_PREFERENCE:
                 case self::USER_ACTION_CREATE_PREFERENCE:
                     if (isset($arguments[0])) {
-                        $this->urlArgs['actionArg1'] = $arguments[0];
+                        $this->_urlArgs['actionArg1'] = $arguments[0];
                     }
             }
         }

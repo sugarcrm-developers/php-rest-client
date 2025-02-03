@@ -41,7 +41,7 @@ class MeTest extends TestCase
     {
         $Me = new Me();
         $Reflection = new \ReflectionClass($Me::class);
-        $actions = $Reflection->getProperty('actions');
+        $actions = $Reflection->getProperty('_actions');
         $actions->setAccessible(true);
         $this->assertNotEmpty(
             $actions->getValue($Me),
@@ -58,7 +58,7 @@ class MeTest extends TestCase
         $configureUrl = $Reflection->getMethod('configureURL');
         $configureUrl->setAccessible(true);
 
-        $action = $Reflection->getProperty('action');
+        $action = $Reflection->getProperty('_action');
         $action->setAccessible(true);
 
         $this->assertEquals('me', $configureUrl->invoke($Me, []));

@@ -26,7 +26,7 @@ class Note extends SugarBean
 
     public const NOTES_ATTACHMENTS_FIELD = 'attachments';
 
-    protected array $actions = [
+    protected array $_actions = [
         self::NOTE_ACTION_MULTI_ATTACH => 'POST',
     ];
 

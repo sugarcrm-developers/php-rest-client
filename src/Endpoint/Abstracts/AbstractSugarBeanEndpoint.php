@@ -134,7 +134,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     {
         parent::__construct($urlArgs, $properties);
         foreach (static::$_DEFAULT_SUGAR_BEAN_ACTIONS as $action => $method) {
-            $this->actions[$action] = $method;
+            $this->_actions[$action] = $method;
         }
     }
 
@@ -473,7 +473,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
             $args[] = 'count';
         }
 
-        $this->configureAction($this->action, $args);
+        $this->configureAction($this->_action, $args);
         return $Filter;
     }
 

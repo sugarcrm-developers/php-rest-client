@@ -11,6 +11,8 @@ use MRussell\REST\Endpoint\Provider\VersionedEndpointProvider;
 use Sugarcrm\REST\Auth\SugarOAuthController;
 use Sugarcrm\REST\Endpoint\AuditLog;
 use Sugarcrm\REST\Endpoint\Email;
+use Sugarcrm\REST\Endpoint\MLPackage;
+use Sugarcrm\REST\Endpoint\ModuleLoader;
 use Sugarcrm\REST\Endpoint\SugarBean;
 use Sugarcrm\REST\Endpoint\ModuleFilter;
 use Sugarcrm\REST\Endpoint\Search;
@@ -143,5 +145,15 @@ class SugarEndpointProvider extends VersionedEndpointProvider
             self::ENDPOINT_CLASS => Email::class,
             self::ENDPOINT_PROPERTIES => [],
         ],
+        [
+            self::ENDPOINT_NAME => 'moduleLoader',
+            self::ENDPOINT_CLASS => ModuleLoader::class,
+            self::ENDPOINT_PROPERTIES => [],
+        ],
+        [
+            self::ENDPOINT_NAME => 'mlp',
+            self::ENDPOINT_CLASS => MLPackage::class,
+            self::ENDPOINT_PROPERTIES => [],
+        ]
     ];
 }
