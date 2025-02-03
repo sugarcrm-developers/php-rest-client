@@ -9,6 +9,8 @@ namespace Sugarcrm\REST\Client;
 use MRussell\REST\Auth\AuthControllerInterface;
 use Psr\Http\Message\MessageInterface;
 use Sugarcrm\REST\Endpoint\Generic;
+use Sugarcrm\REST\Endpoint\MLPackage;
+use Sugarcrm\REST\Endpoint\ModuleLoader;
 use Sugarcrm\REST\Endpoint\Ping;
 use Sugarcrm\REST\Endpoint\Smart;
 use Sugarcrm\REST\Endpoint\SugarBean;
@@ -41,6 +43,8 @@ use Sugarcrm\REST\Endpoint\Provider\SugarEndpointProvider;
  * @method Generic oauth2Logout() - Use logout()
  * @method Smart oauth2Sudo(string $user = '') - Use sudo()
  * @method Note note(string $id = null) -
+ * @method ModuleLoader moduleLoader() -
+ * @method MLPackage mlp(string $id = null)
  */
 class SugarApi extends AbstractClient implements PlatformAwareInterface
 {

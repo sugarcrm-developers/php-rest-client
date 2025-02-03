@@ -1,39 +1,38 @@
 <?php
 
 /**
- * ©[2024] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
+ * ©[2025] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
  */
 
 require_once 'include.php';
 
 $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
 try {
-    if ($SugarAPI->login()) {
-        echo "Logged In: ";
-        pre($SugarAPI->getAuth()->getToken());
+    if ($SugarAPI->isAuthenticated()) {
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
         $Account = $SugarAPI->module('Accounts')->set("name", "Relate Records Test");
-        echo "Creating Account: ";
-        pre($Account->toArray());
         $Account->save();
-        pre("Saved Account ID: {$Account['id']}");
+        echo "Created Account {$Account['id']}: " . json_encode($Account->toArray(),JSON_PRETTY_PRINT) . "\n";
+
         $Opportunity = $SugarAPI->module('Opportunities');
         $Opportunity['name'] = 'Test Opportunity';
-        $Opportunity['description'] = 'This opportunity was created via the SugarCRM REST API Client v3 to test creating relationships.';
-        echo "Creating Opportunity: ";
-        pre($Account->toArray());
+        $Opportunity['description'] = 'This opportunity was created via the SugarCRM PHP REST Client v1 to test creating relationships.';
         $Opportunity->save();
-        pre("Saved Opportunity ID: {$Opportunity['id']}");
+        echo "Created Opportunity {$Opportunity['id']}: " . json_encode($Opportunity->toArray(),JSON_PRETTY_PRINT) . "\n";
 
         echo "Relating Opportunity to Account: ";
         $Account->relate('opportunities', $Opportunity['id']);
-        echo "Response: ";
-        pre($Account->getResponseBody());
+        echo "Response: " . json_encode($Account->getResponseBody(),JSON_PRETTY_PRINT) . "\n";
     } else {
         echo "Could not login.";
-        pre($SugarAPI->getAuth()->getActionEndpoint('authenticate')->getResponse());
+        $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');
+        $response = $oauthEndpoint->getResponse();
+        if ($response) {
+            $statusCode = $oauthEndpoint->getResponse()->getStatusCode();
+            echo "[$statusCode] - " . $oauthEndpoint->getResponse()->getBody()->getContents();
+        }
     }
 } catch (Exception $ex) {
-    echo "Error Occurred: ";
-    pre($ex->getMessage());
-    pre($ex->getTraceAsString());
+    echo "Exception Occurred: " . $ex->getMessage();
+    echo $ex->getTraceAsString();
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ©[2024] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
+ * ©[2025] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
  */
 
 use GuzzleHttp\Middleware;
@@ -11,16 +11,16 @@ $file = __DIR__ . '/test.txt';
 
 if (file_exists($file) && is_readable($file)) {
     $SugarAPI = new \Sugarcrm\REST\Client\SugarAPI($server, $credentials);
-    $history = [];
-    $SugarAPI->getHandlerStack()->push(Middleware::history($history), 'history');
     try {
-        if ($SugarAPI->login()) {
-            echo "Logged In: ";
-            pre($SugarAPI->getAuth()->getToken());
-            $Note = $SugarAPI->Note()->set("name", "Test");
+        if ($SugarAPI->isAuthenticated()) {
+            echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+
+            $Note = $SugarAPI->note()->set("name", "Test");
             echo "Creating Note with multiple attachments: ";
             $Note->multiAttach([
+                //You can add files via filepath only
                 $file,
+                //OR You can add files via array, setting 'path' and the 'name' of the file you want it to have on upload
                 [
                     'path' => $file,
                     'name' => 'foobar.txt',
@@ -30,23 +30,20 @@ if (file_exists($file) && is_readable($file)) {
                     'name' => 'another.txt',
                 ],
             ]);
-            echo "Saved Note ID: {$Note['id']}<br>";
+            echo "Saved Note ID: {$Note['id']}\n";
+            //Add attachment_list field to retrieve request so we can see uploaded files
             $Note->addField('attachment_list');
             $Note->retrieve();
-            pre($Note->attachment_list);
+            echo "Attachments: " . json_encode($Note->attachment_list,JSON_PRETTY_PRINT) . "\n";
         } else {
             echo "Could not login.";
-            pre($SugarAPI->getAuth()->getActionEndpoint('authenticate')->getResponse());
+            $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');
+            $statusCode = $oauthEndpoint->getResponse()->getStatusCode();
+            echo "[$statusCode] - " . $oauthEndpoint->getResponse()->getBody()->getContents();
         }
     } catch (Exception $ex) {
-        echo "Error Occurred: ";
-        pre($ex->getMessage());
-    } finally {
-        foreach ($history as $item) {
-            if (isset($item['request'])) {
-                pre($item['request']->getBody()->getContents());
-            }
-        }
+        echo "Exception Occurred: " . $ex->getMessage();
+        echo $ex->getTraceAsString();
     }
 } else {
     if (!file_exists($file)) {

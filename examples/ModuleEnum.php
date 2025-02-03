@@ -1,25 +1,28 @@
 <?php
 
 /**
- * ©[2024] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
+ * ©[2025] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
  */
 require_once 'include.php';
 
 $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
 
 try {
-    if ($SugarAPI->login()) {
-        echo "Logged In:";
-        pre($SugarAPI->getAuth()->getToken());
+    if ($SugarAPI->isAuthenticated()) {
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+
         $Enum = $SugarAPI->enum('Accounts', 'account_type')->execute();
-        echo "Account Type options: ";
-        pre($Enum->getResponseBody());
+        echo "Account Type options: " . json_encode($Enum->getResponseBody(),JSON_PRETTY_PRINT) . "\n";
     } else {
         echo "Could not login.";
-        pre($SugarAPI->getAuth()->getActionEndpoint('authenticate')->getResponse());
+        $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');
+        $response = $oauthEndpoint->getResponse();
+        if ($response) {
+            $statusCode = $oauthEndpoint->getResponse()->getStatusCode();
+            echo "[$statusCode] - " . $oauthEndpoint->getResponse()->getBody()->getContents();
+        }
     }
 } catch (Exception $ex) {
-    echo "Error Occurred: ";
-    pre($ex->getMessage());
-    pre($ex->getTraceAsString());
+    echo "Exception Occurred: " . $ex->getMessage();
+    echo $ex->getTraceAsString();
 }

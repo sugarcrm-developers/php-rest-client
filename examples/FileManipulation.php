@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ©[2024] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
+ * ©[2025] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
  */
 
 use GuzzleHttp\Middleware;
@@ -11,46 +11,34 @@ $file = __DIR__ . '/test.txt';
 
 if (file_exists($file) && is_readable($file)) {
     $SugarAPI = new \Sugarcrm\REST\Client\SugarAPI($server, $credentials);
-    $history = [];
-    $SugarAPI->getHandlerStack()->push(Middleware::history($history), 'history');
     try {
-        if ($SugarAPI->login()) {
-            echo "Logged In: ";
-            pre($SugarAPI->getAuth()->getToken());
+        if ($SugarAPI->isAuthenticated()) {
+            echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+
             $Note = $SugarAPI->module('Notes')->set("name", "Test");
-            echo "Creating Note: ";
-            pre($Note->toArray());
+            //Create a note with subject
             $Note->save();
             echo "Saved Note ID: {$Note['id']}<br>";
             echo "Attempting to attach $file...";
             $Note->attachFile('filename', $file, true, 'testtest.txt');
-            $response = $Note->getResponseBody();
-            //echo "<pre>" . print_r($Note->getRequest(), true) . "</pre>";
-            echo "File uploaded: ";
-            pre($response);
+            echo "File uploaded: " . json_encode($Note->getResponseBody(),JSON_PRETTY_PRINT) . "\n";
 
             $Note = $SugarAPI->module('Notes');
             echo "Uploading temp file for new note...";
             $Note->tempFile('filename', $file);
-            $response = $Note->getResponseBody();
-            echo "File uploaded: ";
-            pre($response);
+            echo "Temp File uploaded: " . json_encode($Note->getResponseBody(),JSON_PRETTY_PRINT) . "\n";
             $Note->set('name', 'This is a test');
             $Note->save();
-            echo "Note ID: {$Note['id']}<br>";
+            echo "Note ID: {$Note['id']}\n";
         } else {
             echo "Could not login.";
-            pre($SugarAPI->getAuth()->getActionEndpoint('authenticate')->getResponse());
+            $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');
+            $statusCode = $oauthEndpoint->getResponse()->getStatusCode();
+            echo "[$statusCode] - " . $oauthEndpoint->getResponse()->getBody()->getContents();
         }
     } catch (Exception $ex) {
-        echo "Error Occurred: ";
-        pre($ex->getMessage());
-    } finally {
-        foreach ($history as $item) {
-            if (isset($item['request'])) {
-                pre($item['request']->getBody()->getContents());
-            }
-        }
+        echo "Exception Occurred: " . $ex->getMessage();
+        echo $ex->getTraceAsString();
     }
 } else {
     if (!file_exists($file)) {

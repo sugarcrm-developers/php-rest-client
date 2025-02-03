@@ -1,14 +1,17 @@
 <?php
 
 /**
- * ©[2024] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
+ * ©[2025] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
  */
 
 require_once 'include.php';
 
 $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
+
 try {
     if ($SugarAPI->isAuthenticated()) {
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+
         $lead1 = $SugarAPI->module("Leads");
         $lead2 = $SugarAPI->module("Leads");
         $lead1['first_name'] = "Test";
@@ -18,23 +21,27 @@ try {
         $lead2->set($lead1->toArray());
         //Add 2 to second lead last name to differentiate
         $lead2['last_name'] .= "2";
-        //Set
-        $lead1->setCurrentAction(\MRussell\REST\Endpoint\ModelEndpoint::MODEL_ACTION_CREATE);
-        $lead2->setCurrentAction(\MRussell\REST\Endpoint\ModelEndpoint::MODEL_ACTION_CREATE);
+        //By default a SugarBean Endpoint with no action and ID will do a CREATE API Request
+        //To change the API used for the Model Endpoint, set the Action
+        //$lead1->setCurrentAction(\MRussell\REST\Endpoint\ModelEndpoint::MODEL_ACTION_CREATE);
         $bulk = $SugarAPI->bulk();
         $bulk->setData([
             $lead1,
             $lead2,
         ]);
-        echo json_encode($bulk->getData()->toArray(), JSON_PRETTY_PRINT);
+        echo "Bulk Request Payload: " . json_encode($bulk->getData()->toArray(), JSON_PRETTY_PRINT) . "\n";
         $bulk->execute();
-        echo json_encode($bulk->getResponseContent(), JSON_PRETTY_PRINT);
+        echo  "Bulk Response: " . json_encode($bulk->getResponseBody(), JSON_PRETTY_PRINT) . "\n";
     } else {
         echo "Could not login.";
-        pre($SugarAPI->getAuth()->getActionEndpoint('authenticate')->getResponse());
+        $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');
+        $response = $oauthEndpoint->getResponse();
+        if ($response) {
+            $statusCode = $oauthEndpoint->getResponse()->getStatusCode();
+            echo "[$statusCode] - " . $oauthEndpoint->getResponse()->getBody()->getContents();
+        }
     }
 } catch (Exception $ex) {
-    echo "Error Occurred: ";
-    pre($ex->getMessage());
-    pre($ex->getTraceAsString());
+    echo "Exception Occurred: " . $ex->getMessage();
+    echo $ex->getTraceAsString();
 }
