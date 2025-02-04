@@ -13,7 +13,7 @@ if (file_exists($file) && is_readable($file)) {
     $SugarAPI = new \Sugarcrm\REST\Client\SugarAPI($server, $credentials);
     try {
         if ($SugarAPI->isAuthenticated()) {
-            echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+            echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(), JSON_PRETTY_PRINT) . "\n";
 
             $Note = $SugarAPI->note()->set("name", "Test");
             echo "Creating Note with multiple attachments: ";
@@ -34,7 +34,7 @@ if (file_exists($file) && is_readable($file)) {
             //Add attachment_list field to retrieve request so we can see uploaded files
             $Note->addField('attachment_list');
             $Note->retrieve();
-            echo "Attachments: " . json_encode($Note->attachment_list,JSON_PRETTY_PRINT) . "\n";
+            echo "Attachments: " . json_encode($Note->attachment_list, JSON_PRETTY_PRINT) . "\n";
         } else {
             echo "Could not login.";
             $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');

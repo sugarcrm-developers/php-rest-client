@@ -16,7 +16,7 @@ class ModuleLoader extends CollectionEndpoint
         self::PROPERTY_URL => 'Administration/packages/$:filter',
         self::PROPERTY_RESPONSE_PROP => 'packages',
         self::PROPERTY_HTTP_METHOD => 'GET',
-        self::PROPERTY_AUTH => true
+        self::PROPERTY_AUTH => true,
     ];
 
     protected string $_modelInterface = MLPackage::class;

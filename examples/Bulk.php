@@ -10,7 +10,7 @@ $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
 
 try {
     if ($SugarAPI->isAuthenticated()) {
-        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(), JSON_PRETTY_PRINT) . "\n";
 
         $lead1 = $SugarAPI->module("Leads");
         $lead2 = $SugarAPI->module("Leads");

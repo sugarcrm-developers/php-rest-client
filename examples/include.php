@@ -7,8 +7,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $server = 'localhost';
-$credentials = array(
+$credentials = [
     'username' => 'admin',
     'password' => 'asdf',
-    'platform' => 'base'
-);
+    'platform' => 'base',
+];

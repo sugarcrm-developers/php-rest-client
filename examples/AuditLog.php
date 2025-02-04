@@ -21,9 +21,9 @@ try {
         $Account['name'] = 'Audit Log Test - Updated';
         $Account['assigned_user_id'] = 'seed_max_id';
         $Account->save();
-        echo "Account Updated: " . json_encode($Account->toArray(),JSON_PRETTY_PRINT) . "\n";
+        echo "Account Updated: " . json_encode($Account->toArray(), JSON_PRETTY_PRINT) . "\n";
         $Account->audit();
-        echo "Audit Log: " . json_encode($Account->getResponseBody(),JSON_PRETTY_PRINT) . "\n";
+        echo "Audit Log: " . json_encode($Account->getResponseBody(), JSON_PRETTY_PRINT) . "\n";
     } else {
         echo "Could not login.";
         $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');

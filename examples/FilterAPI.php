@@ -9,7 +9,7 @@ require_once 'include.php';
 $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
 try {
     if ($SugarAPI->isAuthenticated()) {
-        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(), JSON_PRETTY_PRINT) . "\n";
 
         $Accounts = $SugarAPI->list('Accounts');
         $Accounts->filter()->and()
@@ -40,7 +40,7 @@ try {
             ->endDate()
             ->endOr();
         echo "Filtering Accounts that are created between dates, or in the last 7 days: "
-            . json_encode($Accounts->filter()->compile(),JSON_PRETTY_PRINT) . "\n";
+            . json_encode($Accounts->filter()->compile(), JSON_PRETTY_PRINT) . "\n";
         $Accounts->fetch();
         echo "Accounts: " . json_encode($Accounts->toArray(), JSON_PRETTY_PRINT) . "\n";
     } else {

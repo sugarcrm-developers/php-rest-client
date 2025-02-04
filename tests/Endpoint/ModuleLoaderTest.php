@@ -53,32 +53,32 @@ class ModuleLoaderTest extends TestCase
      */
     public function testStaged()
     {
-        $this->client->mockResponses->append(new Response(200,[],json_encode([
+        $this->client->mockResponses->append(new Response(200, [], json_encode([
             'packages' => [
                 [
                     'id' => '12345',
-                    'name' => 'test'
-                ]
-            ]
+                    'name' => 'test',
+                ],
+            ],
         ])));
         $packages = new ModuleLoader();
         $packages->setClient($this->client);
         $packages->setBaseUrl('http://localhost/rest/v11');
         $packages->staged();
-        $this->assertEquals('http://localhost/rest/v11/Administration/packages/staged', (string)$this->client->mockResponses->getLastRequest()->getUri());
+        $this->assertEquals('http://localhost/rest/v11/Administration/packages/staged', (string) $this->client->mockResponses->getLastRequest()->getUri());
         $this->assertEquals('GET', $this->client->mockResponses->getLastRequest()->getMethod());
         $package = $packages->get('12345');
         $this->assertInstanceOf(MLPackage::class, $package);
         $this->assertEquals([
             'id' => '12345',
-            'name' => 'test'
+            'name' => 'test',
         ], $package->toArray());
 
-        $this->client->mockResponses->append(new Response(200,[],json_encode([
-            'packages' => []
+        $this->client->mockResponses->append(new Response(200, [], json_encode([
+            'packages' => [],
         ])));
         $packages->fetch();
-        $this->assertEquals('http://localhost/rest/v11/Administration/packages', (string)$this->client->mockResponses->getLastRequest()->getUri());
+        $this->assertEquals('http://localhost/rest/v11/Administration/packages', (string) $this->client->mockResponses->getLastRequest()->getUri());
         $this->assertEquals('GET', $this->client->mockResponses->getLastRequest()->getMethod());
     }
 
@@ -90,13 +90,13 @@ class ModuleLoaderTest extends TestCase
      */
     public function testInstalled()
     {
-        $this->client->mockResponses->append(new Response(200,[],json_encode([
+        $this->client->mockResponses->append(new Response(200, [], json_encode([
             'packages' => [
                 [
                     'id' => '12345',
-                    'name' => 'test'
-                ]
-            ]
+                    'name' => 'test',
+                ],
+            ],
         ])));
         $packages = new ModuleLoader();
         $packages->setClient($this->client);
@@ -108,7 +108,7 @@ class ModuleLoaderTest extends TestCase
         $this->assertInstanceOf(MLPackage::class, $package);
         $this->assertEquals([
             'id' => '12345',
-            'name' => 'test'
+            'name' => 'test',
         ], $package->toArray());
     }
 

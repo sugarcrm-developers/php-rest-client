@@ -89,7 +89,7 @@ class SugarEndpointProvider extends VersionedEndpointProvider
             self::ENDPOINT_PROPERTIES => [
                 Generic::PROPERTY_URL => 'oauth2/logout',
                 Generic::PROPERTY_AUTH => true,
-                Generic::PROPERTY_HTTP_METHOD => "POST"
+                Generic::PROPERTY_HTTP_METHOD => "POST",
             ],
         ],
         [
@@ -154,6 +154,6 @@ class SugarEndpointProvider extends VersionedEndpointProvider
             self::ENDPOINT_NAME => 'mlp',
             self::ENDPOINT_CLASS => MLPackage::class,
             self::ENDPOINT_PROPERTIES => [],
-        ]
+        ],
     ];
 }
