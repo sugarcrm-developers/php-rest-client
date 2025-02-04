@@ -543,12 +543,11 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
         ];
 
         if ($this->_deleteFileOnFail) {
-            $Client = $this->getClient();
-            if ($Client) {
-                $data['platform'] = $Client->getPlatform();
-                $token = $Client->getAuth()->getTokenProp('access_token');
+            if (!empty($this->_client)) {
+                $data['platform'] = $this->getClient()->getPlatform();
+                $token = $this->getClient()->getAuth()->getTokenProp('access_token');
                 if ($token) {
-                    $data['oauth_token'] = $Client->getAuth()->getTokenProp('access_token');
+                    $data['oauth_token'] = $this->getClient()->getAuth()->getTokenProp('access_token');
                 }
             }
         }
