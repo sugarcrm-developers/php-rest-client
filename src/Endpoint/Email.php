@@ -42,7 +42,7 @@ class Email extends SugarBean
             if ($async) {
                 $responses = Utils::unwrap($promises);
                 $Note = new Note();
-                foreach($responses as $response){
+                foreach ($responses as $response) {
                     $Note->setResponse($response);
                     $this->parseAttachmentUploadResponse($Note->getResponseBody());
                 }

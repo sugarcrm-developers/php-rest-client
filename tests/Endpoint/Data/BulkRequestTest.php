@@ -69,7 +69,7 @@ class BulkRequestTest extends TestCase
 
         $Request = new Request("POST", 'http://localhost/rest/v11/Accounts', ['Content-Type' => 'application/json'], json_encode(['foo' => 'bar']));
 
-        $Filter = new ModuleFilter([],['Contacts']);
+        $Filter = new ModuleFilter([], ['Contacts']);
         $Filter->setBaseUrl('http://localhost/rest/v11');
         $Filter->filter()->equals('foo', 'bar');
 

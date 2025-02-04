@@ -9,12 +9,12 @@ require_once 'include.php';
 $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
 try {
     if ($SugarAPI->isAuthenticated()) {
-        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(), JSON_PRETTY_PRINT) . "\n";
         if ($SugarAPI->sudo('will')) {
-            echo "Sudo'd to will. Token: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+            echo "Sudo'd to will. Token: " . json_encode($SugarAPI->getAuth()->getToken(), JSON_PRETTY_PRINT) . "\n";
             $Me = $SugarAPI->me();
             $Me->retrieve();
-            echo "User: " . json_encode($Me->toArray(),JSON_PRETTY_PRINT) . "\n";
+            echo "User: " . json_encode($Me->toArray(), JSON_PRETTY_PRINT) . "\n";
         }
     } else {
         echo "Could not login.";

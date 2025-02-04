@@ -42,6 +42,6 @@ class PingTest extends TestCase
         $Ping->setClient($this->client);
         $Ping->setBaseUrl('http://localhost/rest/v11');
         $Ping->whattimeisit();
-        $this->assertEquals('http://localhost/rest/v11/ping/whattimeisit', (string)$this->client->mockResponses->getLastRequest()->getUri());
+        $this->assertEquals('http://localhost/rest/v11/ping/whattimeisit', (string) $this->client->mockResponses->getLastRequest()->getUri());
     }
 }

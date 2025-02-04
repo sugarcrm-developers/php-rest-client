@@ -30,7 +30,7 @@ class MLPackage extends SugarBean
         self::ACTION_ENABLE => 'GET',
         self::ACTION_DISABLE => 'GET',
         self::ACTION_INSTALL_STATUS => 'GET',
-        self::BEAN_ACTION_ATTACH_FILE => 'POST'
+        self::BEAN_ACTION_ATTACH_FILE => 'POST',
     ];
 
     protected bool $_installing = false;
@@ -99,7 +99,7 @@ class MLPackage extends SugarBean
                     $this->_installing = false;
                     break;
                 case self::ACTION_INSTALL_STATUS:
-                    if (!empty($data['message'])){
+                    if (!empty($data['message'])) {
                         $this->_installOutput = $data['message'] ?? [];
                     }
                     break;

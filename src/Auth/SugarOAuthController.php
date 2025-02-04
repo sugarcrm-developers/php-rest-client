@@ -81,7 +81,7 @@ class SugarOAuthController extends AbstractOAuth2Controller
         $key = '';
         try {
             $ep = $this->getActionEndpoint(self::ACTION_AUTH);
-            $key = preg_replace("/\/rest\/v[^\/]+\//","",$ep->getBaseUrl());
+            $key = preg_replace("/\/rest\/v[^\/]+\//", "", $ep->getBaseUrl());
         } catch (\Exception) {
             $this->getLogger()->info("Cannot use server in cache string.");
         }

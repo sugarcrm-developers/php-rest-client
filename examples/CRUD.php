@@ -10,7 +10,7 @@ $SugarAPI = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);
 
 try {
     if ($SugarAPI->isAuthenticated()) {
-        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(),JSON_PRETTY_PRINT) . "\n";
+        echo "Logged In: " . json_encode($SugarAPI->getAuth()->getToken(), JSON_PRETTY_PRINT) . "\n";
         // Create an Account called Test with a phone number
         $Account = $SugarAPI->module('Accounts');
         // You can set data via Array Access, Object Access, or set methods
@@ -24,15 +24,15 @@ try {
         $Account->set('employees', '100');
         $Account['shipping_address_city'] = 'Indianapolis';
         $Account->save();
-        echo "Account Updated: " . json_encode($Account->toArray(),JSON_PRETTY_PRINT) . "\n";
+        echo "Account Updated: " . json_encode($Account->toArray(), JSON_PRETTY_PRINT) . "\n";
 
         //Retrieve the Account in a new Object
         $Account2 = $SugarAPI->module('Accounts', $Account['id']);
         $Account2->retrieve();
-        echo "Retrieved Account: " . json_encode($Account2->toArray(),JSON_PRETTY_PRINT) . "\n";
+        echo "Retrieved Account: " . json_encode($Account2->toArray(), JSON_PRETTY_PRINT) . "\n";
         //Delete the Account
         $Account2->delete();
-        echo "Deleted Response: " . json_encode($Account2->getResponseBody(),JSON_PRETTY_PRINT) . "\n";
+        echo "Deleted Response: " . json_encode($Account2->getResponseBody(), JSON_PRETTY_PRINT) . "\n";
     } else {
         echo "Could not login.";
         $oauthEndpoint = $SugarAPI->getAuth()->getActionEndpoint('authenticate');

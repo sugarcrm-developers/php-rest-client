@@ -94,7 +94,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     protected static array $_DEFAULT_PROPERTIES = [
         self::PROPERTY_URL => '$module/$id/$:action/$:actionArg1/$:actionArg2/$:actionArg3',
         self::PROPERTY_HTTP_METHOD => 'GET',
-        self::PROPERTY_AUTH => true
+        self::PROPERTY_AUTH => true,
     ];
 
     /**
@@ -380,7 +380,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
      */
     public function auditLog(?int $limit = null): AuditLog
     {
-        $auditCollection = new AuditLog([],['module' => $this->getModule(), 'id' => $this->get('id')]);
+        $auditCollection = new AuditLog([], ['module' => $this->getModule(), 'id' => $this->get('id')]);
 
         if ($limit !== null) {
             $auditCollection->setLimit($limit);
