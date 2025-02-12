@@ -14,7 +14,12 @@ trait ModuleAwareTrait
 
     public function getModule(): string
     {
-        return $this->_beanName;
+        $module = $this->_beanName;
+        if (method_exists($this, 'getProperty')) {
+            $module = $this->getProperty(AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG);
+        }
+
+        return empty($this->_beanName) ? ($module ?? "") : $this->_beanName;
     }
 
     /**
@@ -24,27 +29,36 @@ trait ModuleAwareTrait
     public function setModule(string $module): static
     {
         $this->_beanName = $module;
+        if (method_exists($this, 'setProperty')) {
+            $this->setProperty(AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG, $module);
+        }
+
         return $this;
     }
 
-    /**
-     * Alter the URL Args array to set the Module Var
-     */
-    protected function configureModuleUrlArg(array $urlArgs): array
-    {
-        if (isset($urlArgs[0])) {
-            $urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG] = $urlArgs[0];
-            unset($urlArgs[0]);
-        }
 
+    protected function setModuleFromUrlArgs(array $urlArgs): void
+    {
         if (isset($urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG]) && $this->getModule() != $urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG]) {
             $this->setModule($urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG]);
         }
+    }
 
-        if (!isset($urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG]) && !empty($this->getModule())) {
+    protected function addModuleToUrlArgs(array $urlArgs): array
+    {
+        $module = $this->getModule();
+        if (!isset($urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG]) && !empty($module)) {
             $urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG] = $this->getModule();
         }
 
         return $urlArgs;
+    }
+
+    protected function syncModuleAndUrlArgs(): void
+    {
+        if (property_exists($this, '_urlArgs') && !empty($this->_urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG])) {
+            $this->setModuleFromUrlArgs($this->_urlArgs);
+            unset($this->_urlArgs[AbstractSugarBeanEndpoint::BEAN_MODULE_URL_ARG]);
+        }
     }
 }

@@ -29,10 +29,11 @@ class ModuleLoaderTest extends TestCase
     /**
      * @covers ::setUrlArgs
      */
-    public function testSetUrlArgs()
+    public function testSetUrlArgs(): void
     {
         $Packages = new ModuleLoader();
         $Packages->setUrlArgs(['foo']);
+
         $ReflectionClass = new \ReflectionClass($Packages);
         $filter = $ReflectionClass->getProperty('_filter');
         $filter->setAccessible(true);
@@ -51,7 +52,7 @@ class ModuleLoaderTest extends TestCase
      * @covers ::configureURL
      * @covers ::execute
      */
-    public function testStaged()
+    public function testStaged(): void
     {
         $this->client->mockResponses->append(new Response(200, [], json_encode([
             'packages' => [
@@ -88,7 +89,7 @@ class ModuleLoaderTest extends TestCase
      * @covers ::configureURL
      * @covers ::execute
      */
-    public function testInstalled()
+    public function testInstalled(): void
     {
         $this->client->mockResponses->append(new Response(200, [], json_encode([
             'packages' => [
@@ -115,7 +116,7 @@ class ModuleLoaderTest extends TestCase
     /**
      * @covers ::newPackage
      */
-    public function testNewPackage()
+    public function testNewPackage(): void
     {
         $packages = new ModuleLoader();
         $mlp = $packages->newPackage();

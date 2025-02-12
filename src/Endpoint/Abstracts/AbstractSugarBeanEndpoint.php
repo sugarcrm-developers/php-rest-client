@@ -19,9 +19,11 @@ use MRussell\REST\Exception\Endpoint\EndpointException;
 use MRussell\REST\Traits\PsrLoggerTrait;
 use Sugarcrm\REST\Endpoint\Data\FilterData;
 use Sugarcrm\REST\Endpoint\AuditLog;
+use Sugarcrm\REST\Endpoint\Integrate;
 use Sugarcrm\REST\Endpoint\SugarEndpointInterface;
 use Sugarcrm\REST\Endpoint\Traits\CompileRequestTrait;
 use Sugarcrm\REST\Endpoint\Traits\FieldsDataTrait;
+use Sugarcrm\REST\Endpoint\Traits\IntegrateSyncKeyTrait;
 use Sugarcrm\REST\Endpoint\Traits\ModuleAwareTrait;
 
 /**
@@ -39,14 +41,18 @@ use Sugarcrm\REST\Endpoint\Traits\ModuleAwareTrait;
  * @method $this    audit()
  * @method $this    file()
  * @method $this    duplicateCheck()
+ * @method $this    upsert()
  */
 abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarEndpointInterface
 {
-    use CompileRequestTrait;
+    use CompileRequestTrait {
+        compileRequest as private doCompileRequest;
+    }
     use PsrLoggerTrait;
     use ModuleAwareTrait;
     use FieldsDataTrait;
     use FileUploadsTrait;
+    use IntegrateSyncKeyTrait;
 
     public const MODEL_ACTION_VAR = 'action';
 
@@ -80,11 +86,13 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
 
     public const BEAN_ACTION_DUPLICATE_CHECK = 'duplicateCheck';
 
-    public const BEAN_ACTION_ARG1_VAR = 'actionArg1';
+    public const BEAN_ACTION_UPSERT = 'upsert';
 
-    public const BEAN_ACTION_ARG2_VAR = 'actionArg2';
+    public const BEAN_ACTION_ARG1_VAR = 'actArg1';
 
-    public const BEAN_ACTION_ARG3_VAR = 'actionArg3';
+    public const BEAN_ACTION_ARG2_VAR = 'actArg2';
+
+    public const BEAN_ACTION_ARG3_VAR = 'actArg3';
 
     public const BEAN_MODULE_URL_ARG = 'module';
 
@@ -92,7 +100,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
      * @inheritdoc
      */
     protected static array $_DEFAULT_PROPERTIES = [
-        self::PROPERTY_URL => '$module/$id/$:action/$:actionArg1/$:actionArg2/$:actionArg3',
+        self::PROPERTY_URL => '$module/$:id/$:action/$:actArg1/$:actArg2/$:actArg3',
         self::PROPERTY_HTTP_METHOD => 'GET',
         self::PROPERTY_AUTH => true,
     ];
@@ -116,6 +124,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
         self::BEAN_ACTION_ATTACH_FILE => "POST",
         self::BEAN_ACTION_TEMP_FILE_UPLOAD => "POST",
         self::BEAN_ACTION_DUPLICATE_CHECK => "POST",
+        self::BEAN_ACTION_UPSERT => "PATCH",
     ];
 
     /**
@@ -139,20 +148,15 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     }
 
     /**
-     * Passed in options get changed such that 1st Option (key 0) becomes Module
-     * 2nd Option (Key 1) becomes ID
      * @inheritdoc
      */
     public function setUrlArgs(array $args): static
     {
-        $args = $this->configureModuleUrlArg($args);
-        if (isset($args[1])) {
-            $this->set($this->getKeyProperty(), $args[1]);
-            unset($args[1]);
-        }
-
-        return parent::setUrlArgs($args);
+        parent::setUrlArgs($args);
+        $this->syncModuleAndUrlArgs();
+        return $this;
     }
+
 
     /**
      * Configure Uploads on Request
@@ -179,6 +183,16 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     {
         $data = $this->getData();
         switch ($this->getCurrentAction()) {
+            case self::BEAN_ACTION_UPSERT:
+                $data->reset();
+                $data->set($this->toArray());
+                $syncKeyField = $this->getSyncKeyField();
+                if (!empty($syncKeyField)) {
+                    $data[Integrate::DATA_SYNC_KEY_FIELD] = $syncKeyField;
+                }
+
+                $data[Integrate::DATA_SYNC_KEY_VALUE] = $this->getSyncKey();
+                return $data;
             case self::MODEL_ACTION_CREATE:
             case self::MODEL_ACTION_UPDATE:
                 $data->reset();
@@ -219,6 +233,10 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
                     $body = $this->getResponseBody();
                     $this->clear();
                     $this->syncFromApi($this->parseResponseBodyToArray($body, $this->getModelResponseProp()));
+                    return;
+                case self::BEAN_ACTION_UPSERT:
+                    $body = $this->getResponseContent($response);
+                    $this->syncFromApi($this->parseResponseBodyToArray($body, Integrate::INTEGRATE_RESPONSE_PROP));
                     return;
             }
         }
@@ -266,13 +284,21 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     protected function configureURL(array $urlArgs): string
     {
         $action = null;
-        $urlArgs = $this->configureModuleUrlArg($urlArgs);
+        $urlArgs = $this->addModuleToUrlArgs($urlArgs);
         switch ($this->getCurrentAction()) {
             case self::BEAN_ACTION_CREATE_RELATED:
             case self::BEAN_ACTION_MASS_RELATE:
             case self::BEAN_ACTION_UNLINK:
             case self::BEAN_ACTION_FILTER_RELATED:
                 $action = self::BEAN_ACTION_RELATE;
+                break;
+            case self::BEAN_ACTION_UPSERT:
+                $urlArgs[self::MODEL_ID_VAR] = Integrate::SYNC_KEY;
+                $syncKey = $this->getSyncKey();
+                if (!empty($syncKey)) {
+                    $action = $syncKey;
+                }
+
                 break;
             case self::BEAN_ACTION_TEMP_FILE_UPLOAD:
                 $urlArgs[self::MODEL_ID_VAR] = 'temp';
@@ -310,39 +336,43 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     protected function configureAction(string $action, array $arguments = []): void
     {
         $urlArgs = $this->getUrlArgs();
-        if (isset($urlArgs[self::BEAN_ACTION_ARG1_VAR])) {
-            unset($urlArgs[self::BEAN_ACTION_ARG1_VAR]);
+        if (isset($urlArgs[self::MODEL_ACTION_VAR]) && $urlArgs[self::MODEL_ACTION_VAR] != $action) {
+            unset($urlArgs[self::MODEL_ACTION_VAR]);
         }
 
-        if (isset($urlArgs[self::BEAN_ACTION_ARG2_VAR])) {
-            unset($urlArgs[self::BEAN_ACTION_ARG2_VAR]);
-        }
-
-        if (isset($urlArgs[self::BEAN_ACTION_ARG3_VAR])) {
-            unset($urlArgs[self::BEAN_ACTION_ARG3_VAR]);
-        }
-
-        if (!empty($arguments)) {
-            switch ($action) {
-                case self::BEAN_ACTION_TEMP_FILE_UPLOAD:
-                case self::BEAN_ACTION_ATTACH_FILE:
-                    $this->_upload = true;
-                    // no break
-                case self::BEAN_ACTION_RELATE:
-                case self::BEAN_ACTION_DOWNLOAD_FILE:
-                case self::BEAN_ACTION_UNLINK:
-                case self::BEAN_ACTION_CREATE_RELATED:
-                case self::BEAN_ACTION_FILTER_RELATED:
-                    if (isset($arguments[0])) {
-                        $urlArgs[self::BEAN_ACTION_ARG1_VAR] = $arguments[0];
-                        if (isset($arguments[1])) {
-                            $urlArgs[self::BEAN_ACTION_ARG2_VAR] = $arguments[1];
-                            if (isset($arguments[2])) {
-                                $urlArgs[self::BEAN_ACTION_ARG3_VAR] = $arguments[2];
-                            }
+        switch ($action) {
+            case self::BEAN_ACTION_TEMP_FILE_UPLOAD:
+            case self::BEAN_ACTION_ATTACH_FILE:
+                $this->_upload = true;
+                // no break
+            case self::BEAN_ACTION_RELATE:
+            case self::BEAN_ACTION_DOWNLOAD_FILE:
+            case self::BEAN_ACTION_UNLINK:
+            case self::BEAN_ACTION_CREATE_RELATED:
+            case self::BEAN_ACTION_FILTER_RELATED:
+                if (isset($arguments[0])) {
+                    $urlArgs[self::BEAN_ACTION_ARG1_VAR] = $arguments[0];
+                    if (isset($arguments[1])) {
+                        $urlArgs[self::BEAN_ACTION_ARG2_VAR] = $arguments[1];
+                        if (isset($arguments[2])) {
+                            $urlArgs[self::BEAN_ACTION_ARG3_VAR] = $arguments[2];
                         }
                     }
-            }
+                }
+
+                break;
+            default:
+                //If action is not defined above, remove action args
+                $actionArgs = [
+                    self::BEAN_ACTION_ARG1_VAR,
+                    self::BEAN_ACTION_ARG2_VAR,
+                    self::BEAN_ACTION_ARG3_VAR,
+                ];
+                foreach ($actionArgs as $actionArg) {
+                    if (isset($urlArgs[$actionArg])) {
+                        unset($urlArgs[$actionArg]);
+                    }
+                }
         }
 
         $this->setUrlArgs($urlArgs);
@@ -542,13 +572,11 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
             'delete_if_fails' => $this->_deleteFileOnFail,
         ];
 
-        if ($this->_deleteFileOnFail) {
-            if (!empty($this->_client)) {
-                $data['platform'] = $this->getClient()->getPlatform();
-                $token = $this->getClient()->getAuth()->getTokenProp('access_token');
-                if ($token) {
-                    $data['oauth_token'] = $this->getClient()->getAuth()->getTokenProp('access_token');
-                }
+        if ($this->_deleteFileOnFail && !empty($this->_client)) {
+            $data['platform'] = $this->getClient()->getPlatform();
+            $token = $this->getClient()->getAuth()->getTokenProp('access_token');
+            if ($token) {
+                $data['oauth_token'] = $this->getClient()->getAuth()->getTokenProp('access_token');
             }
         }
 
