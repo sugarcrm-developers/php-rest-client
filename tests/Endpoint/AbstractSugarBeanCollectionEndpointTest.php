@@ -39,28 +39,6 @@ class AbstractSugarBeanCollectionEndpointTest extends TestCase
     }
 
     /**
-     * @covers ::setUrlArgs
-     */
-    public function testSetUrlArgs(): void
-    {
-        $Endpoint = new SugarBeanCollectionEndpoint();
-        $this->assertEquals($Endpoint, $Endpoint->setUrlArgs([
-            'Accounts',
-        ]));
-        $this->assertEquals([
-            'module' => 'Accounts',
-        ], $Endpoint->getUrlArgs());
-        $this->assertEquals($Endpoint, $Endpoint->setUrlArgs([
-            'Accounts',
-            'foo',
-        ]));
-        $this->assertEquals([
-            'module' => 'Accounts',
-            1 => 'foo',
-        ], $Endpoint->getUrlArgs());
-    }
-
-    /**
      * @covers ::getModule
      * @covers ::setModule
      */
@@ -69,6 +47,26 @@ class AbstractSugarBeanCollectionEndpointTest extends TestCase
         $Endpoint = new SugarBeanCollectionEndpoint();
         $this->assertEquals($Endpoint, $Endpoint->setModule('Accounts'));
         $this->assertEquals('Accounts', $Endpoint->getModule());
+    }
+
+    /**
+     * @covers ::setUrlArgs
+     */
+    public function testSetUrlArgs(): void
+    {
+        $Endpoint = new SugarBeanCollectionEndpoint();
+        $this->assertEquals($Endpoint, $Endpoint->setUrlArgs(['Accounts']));
+        $this->assertEmpty($Endpoint->getUrlArgs());
+        $this->assertEquals('Accounts', $Endpoint->getModule());
+    }
+
+    /**
+     * @covers ::getCollectionResponseProp
+     */
+    public function testGetCollectionResponseProp(): void
+    {
+        $Endpoint = new SugarBeanCollectionEndpoint();
+        $this->assertEquals('records', $Endpoint->getCollectionResponseProp());
     }
 
     /**
@@ -137,6 +135,7 @@ class AbstractSugarBeanCollectionEndpointTest extends TestCase
 
     /**
      * @covers ::configureURL
+     * @covers ::addModuleToUrlArgs
      */
     public function testConfigureURL(): void
     {

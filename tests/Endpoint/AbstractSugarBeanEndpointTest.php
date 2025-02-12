@@ -54,9 +54,26 @@ class AbstractSugarBeanEndpointTest extends TestCase
     }
 
     /**
+     * @covers ::execute
+     * @covers ::setDefaultAction
+     */
+    public function testDefaultAction(): void
+    {
+        $Bean = new SugarBean();
+        $Bean->setBaseUrl('http://localhost/rest/v11/');
+        $Bean->setUrlArgs(['Foo', 'bar']);
+
+        $Request = $Bean->compileRequest();
+        $this->assertEquals("GET", $Request->getMethod());
+        $this->assertEquals('http://localhost/rest/v11/Foo/bar', $Request->getUri()->__toString());
+        $this->assertEmpty($Request->getBody()->getContents());
+    }
+
+    /**
      * @covers ::setUrlArgs
      * @covers ::getModule
-     * @covers ::configureModuleUrlArg
+     * @covers ::syncModuleAndUrlArgs
+     * @covers ::setModuleFromUrlArgs
      */
     public function testSetUrlArgs(): void
     {
@@ -65,35 +82,30 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $this->assertEquals($Bean, $Bean->setUrlArgs([
             'Test',
         ]));
-        $this->assertEquals([
-            'module' => 'Test',
-        ], $Bean->getUrlArgs());
+        $this->assertEquals([], $Bean->getUrlArgs());
         $this->assertEquals('Test', $Bean->getModule());
         $this->assertEquals($Bean, $Bean->setUrlArgs([
             'Test',
             '123-abc',
         ]));
-        $this->assertEquals([
-            'module' => 'Test',
-        ], $Bean->getUrlArgs());
+        $this->assertEquals([], $Bean->getUrlArgs());
         $this->assertEquals('Test', $Bean->getModule());
-        $this->assertEquals('123-abc', $Bean->get('id'));
+        $this->assertEquals('123-abc', $Bean->getId());
         $this->assertEquals($Bean, $Bean->setUrlArgs([
             'Test',
             '123-abc',
             'foo',
         ]));
         $this->assertEquals([
-            2 => 'foo',
-            'module' => 'Test',
+            'action' => 'foo',
         ], $Bean->getUrlArgs());
         $this->assertEquals('Test', $Bean->getModule());
-        $this->assertEquals('123-abc', $Bean->get('id'));
+        $this->assertEquals('123-abc', $Bean->getId());
     }
 
     /**
      * @covers ::setModule
-     * @covers ::configureModuleUrlArg
+     * @covers ::getModule
      */
     public function testSetModule(): void
     {
@@ -101,21 +113,10 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $this->assertEquals($Bean, $Bean->setModule('Test'));
         $this->assertEquals('Test', $Bean->getModule());
 
-        $Reflection = new \ReflectionClass($Bean);
-        $configureModuleArg = $Reflection->getMethod('configureModuleUrlArg');
-        $configureModuleArg->setAccessible(true);
-
-        $args = [
-            0 => 'foobar',
-        ];
-        $args = $configureModuleArg->invoke($Bean, $args);
-        $this->assertFalse(isset($args[0]));
-        $this->assertEquals('foobar', $Bean->getModule());
-        $this->assertEquals('foobar', $args['module']);
-        $args = $configureModuleArg->invoke($Bean, []);
-        $this->assertFalse(isset($args[0]));
-        $this->assertEquals('foobar', $Bean->getModule());
-        $this->assertEquals('foobar', $args['module']);
+        $Bean->setModule('');
+        $this->assertEquals('', $Bean->getModule());
+        $Bean->setProperty(SugarBean::BEAN_MODULE_URL_ARG, 'Test');
+        $this->assertEquals('Test', $Bean->getModule());
     }
 
     /**
@@ -323,6 +324,8 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
     /**
      * @covers ::configureURL
+     * @covers ::configureAction
+     * @covers ::addModuleToUrlArgs
      */
     public function testConfigureURL(): void
     {
@@ -356,30 +359,44 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_AUDIT);
         $this->assertEquals('Foo/bar/audit', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
 
-        //More Options Needed
-        $options[] = 'baz';
+        //Verify that action is unset for CRUD operations, and not in URL
+        $options['action'] = 'test';
+        $Bean->setUrlArgs($options);
+        $urlArgs = $Bean->getUrlArgs();
+        $Bean->setCurrentAction(SugarBean::MODEL_ACTION_RETRIEVE);
+        $this->assertEquals('Foo/bar', $configureUrl->invoke($Bean, $urlArgs));
+        $Bean->setCurrentAction(SugarBean::MODEL_ACTION_UPDATE);
+        $this->assertEquals('Foo/bar', $configureUrl->invoke($Bean, $urlArgs));
+        $Bean->setCurrentAction(SugarBean::MODEL_ACTION_DELETE);
+        $this->assertEquals('Foo/bar', $configureUrl->invoke($Bean, $urlArgs));
+        $Bean->setCurrentAction(SugarBean::MODEL_ACTION_CREATE);
+        $this->assertEquals('Foo', $configureUrl->invoke($Bean, $urlArgs));
+        unset($options['action']);
+
+        //Actions with arguments
+        $options['actArg1'] = 'baz';
         $Bean->setUrlArgs($options);
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_CREATE_RELATED);
         $this->assertEquals('Foo/bar/link/baz', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
-        $options[] = 'foz';
+        $options['actArg2'] = 'foz';
         $Bean->setUrlArgs($options);
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_UNLINK);
         $this->assertEquals('Foo/bar/link/baz/foz', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_RELATE);
         $this->assertEquals('Foo/bar/link/baz/foz', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
-        $options = ['Foo', 'bar', 'uploadFile'];
+        $options = ['Foo', 'bar', 'actArg1' => 'uploadFile'];
         $Bean->setUrlArgs($options);
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_ATTACH_FILE);
         $this->assertEquals('Foo/bar/file/uploadFile', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_DOWNLOAD_FILE);
         $this->assertEquals('Foo/bar/file/uploadFile', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
-        $options = [
-            'Foo', 'bar',
-            'action' => 'test',
-        ];
-        $Bean->setCurrentAction(SugarBean::MODEL_ACTION_RETRIEVE);
-        unset($Bean[$Bean->getKeyProperty()]);
-        $this->assertEquals('Foo/bar', $configureUrl->invoke($Bean, $options));
+
+        //Integrate API
+        $Bean->setCurrentAction(SugarBean::BEAN_ACTION_UPSERT);
+        $this->assertEquals('Foo/sync_key', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
+        $Bean->setSyncKeyField('sync_key');
+        $Bean['sync_key'] = 'foo';
+        $this->assertEquals('Foo/sync_key/foo', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
     }
 
     /**
@@ -398,52 +415,45 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $configureAction->invoke($Bean, SugarBean::BEAN_ACTION_RELATE, ['foo', 'bar']);
         $this->assertEquals('Test', $Bean->getModule());
         $this->assertEquals([
-            'module' => 'Test',
-            'actionArg1' => 'foo',
-            'actionArg2' => 'bar',
+            'actArg1' => 'foo',
+            'actArg2' => 'bar',
         ], $Bean->getUrlArgs());
 
         $Bean->setUrlArgs(['Test', '1234']);
         $configureAction->invoke($Bean, SugarBean::BEAN_ACTION_ATTACH_FILE, ['fileField']);
         $this->assertEquals('Test', $Bean->getModule());
         $this->assertEquals([
-            'module' => 'Test',
-            'actionArg1' => 'fileField',
+            'actArg1' => 'fileField',
         ], $Bean->getUrlArgs());
 
         $Bean->setUrlArgs(['Test', '1234']);
         $configureAction->invoke($Bean, SugarBean::BEAN_ACTION_DOWNLOAD_FILE, ['fileField']);
         $this->assertEquals('Test', $Bean->getModule());
         $this->assertEquals([
-            'module' => 'Test',
-            'actionArg1' => 'fileField',
+            'actArg1' => 'fileField',
         ], $Bean->getUrlArgs());
 
         $Bean->setUrlArgs(['Test', '1234']);
         $configureAction->invoke($Bean, SugarBean::BEAN_ACTION_UNLINK, ['foo', 'bar']);
         $this->assertEquals('Test', $Bean->getModule());
         $this->assertEquals([
-            'module' => 'Test',
-            'actionArg1' => 'foo',
-            'actionArg2' => 'bar',
+            'actArg1' => 'foo',
+            'actArg2' => 'bar',
         ], $Bean->getUrlArgs());
 
         $Bean->setUrlArgs(['Test', '1234']);
         $configureAction->invoke($Bean, SugarBean::BEAN_ACTION_CREATE_RELATED, ['foo', 'bar', 'baz']);
         $this->assertEquals('Test', $Bean->getModule());
         $this->assertEquals([
-            'module' => 'Test',
-            'actionArg1' => 'foo',
-            'actionArg2' => 'bar',
-            'actionArg3' => 'baz',
+            'actArg1' => 'foo',
+            'actArg2' => 'bar',
+            'actArg3' => 'baz',
         ], $Bean->getUrlArgs());
 
         $Bean->setUrlArgs(['Test', '1234']);
         $configureAction->invoke($Bean, SugarBean::MODEL_ACTION_CREATE, ['foo', 'bar', 'baz']);
         $this->assertEquals('Test', $Bean->getModule());
-        $this->assertEquals([
-            'module' => 'Test',
-        ], $Bean->getUrlArgs());
+        $this->assertEquals([], $Bean->getUrlArgs());
     }
 
     /**

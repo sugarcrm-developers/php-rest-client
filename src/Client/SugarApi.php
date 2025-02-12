@@ -6,9 +6,11 @@
 
 namespace Sugarcrm\REST\Client;
 
+use GuzzleHttp\Client;
 use MRussell\REST\Auth\AuthControllerInterface;
 use Psr\Http\Message\MessageInterface;
 use Sugarcrm\REST\Endpoint\Generic;
+use Sugarcrm\REST\Endpoint\Integrate;
 use Sugarcrm\REST\Endpoint\MLPackage;
 use Sugarcrm\REST\Endpoint\ModuleLoader;
 use Sugarcrm\REST\Endpoint\Ping;
@@ -45,6 +47,7 @@ use Sugarcrm\REST\Endpoint\Provider\SugarEndpointProvider;
  * @method Note note(string $id = null) -
  * @method ModuleLoader moduleLoader() -
  * @method MLPackage mlp(string $id = null)
+ * @method Integrate integrate(string $module = '', string $id = '')
  */
 class SugarApi extends AbstractClient implements PlatformAwareInterface
 {
@@ -106,6 +109,11 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
         if (!empty($credentials)) {
             $this->updateAuthCredentials($credentials);
         }
+    }
+
+    protected function initHttpClient(): void
+    {
+        $this->httpClient = new Client(['handler' => $this->getHandlerStack(),'verify' => false]);
     }
 
     /**

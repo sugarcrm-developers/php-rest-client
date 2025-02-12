@@ -38,16 +38,17 @@ abstract class AbstractSugarBeanCollectionEndpoint extends AbstractSugarCollecti
 
     protected string $_modelInterface = SugarBean::class;
 
+    public function setUrlArgs(array $args): static
+    {
+        parent::setUrlArgs($args);
+        $this->syncModuleAndUrlArgs();
+        return $this;
+    }
+
     public function getCollectionResponseProp(): string
     {
         $prop = parent::getCollectionResponseProp();
         return empty($prop) ? self::SUGAR_COLLECTION_RESP_PROP : $prop;
-    }
-
-    public function setUrlArgs(array $args): static
-    {
-        $args = $this->configureModuleUrlArg($args);
-        return parent::setUrlArgs($args);
     }
 
     /**
@@ -102,7 +103,7 @@ abstract class AbstractSugarBeanCollectionEndpoint extends AbstractSugarCollecti
      */
     protected function configureURL(array $urlArgs): string
     {
-        $urlArgs['module'] = $this->getModule();
+        $urlArgs = $this->addModuleToUrlArgs($urlArgs);
         return parent::configureURL($urlArgs);
     }
 

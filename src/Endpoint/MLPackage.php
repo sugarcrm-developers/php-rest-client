@@ -3,7 +3,6 @@
 namespace Sugarcrm\REST\Endpoint;
 
 use GuzzleHttp\Psr7\Response;
-use MRussell\REST\Endpoint\ModelEndpoint;
 
 class MLPackage extends SugarBean
 {
@@ -36,15 +35,6 @@ class MLPackage extends SugarBean
     protected bool $_installing = false;
 
     protected array $_installOutput = [];
-
-    public function setUrlArgs(array $args): static
-    {
-        if (isset($args[0])) {
-            $this->set($this->getKeyProperty(), $args[0]);
-            unset($args[0]);
-        }
-        return ModelEndpoint::setUrlArgs($args);
-    }
 
     public function install(array $options = [], bool $async = false): static
     {
@@ -85,6 +75,7 @@ class MLPackage extends SugarBean
             $this->setFile(self::MLP_FIELD_PROP, $data[self::MLP_FIELD_PROP]);
             $this->_upload = true;
         }
+
         return parent::configurePayload();
     }
 
@@ -102,8 +93,10 @@ class MLPackage extends SugarBean
                     if (!empty($data['message'])) {
                         $this->_installOutput = $data['message'] ?? [];
                     }
+
                     break;
             }
+
             if (($data['status'] ?? "") == 'installed') {
                 $this->_installing = false;
             }

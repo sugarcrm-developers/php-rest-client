@@ -67,7 +67,7 @@ class MeTest extends TestCase
         $action->setValue($Me, $Me::USER_ACTION_SAVE_PREFERENCES);
         $this->assertEquals('me/preferences', $configureUrl->invoke($Me, []));
         $action->setValue($Me, $Me::USER_ACTION_CREATE_PREFERENCE);
-        $this->assertEquals('me/preference/pref1', $configureUrl->invoke($Me, ['actionArg1' => 'pref1']));
+        $this->assertEquals('me/preference/pref1', $configureUrl->invoke($Me, ['actArg1' => 'pref1']));
         $action->setValue($Me, $Me::MODEL_ACTION_DELETE);
         $this->assertEquals('me', $configureUrl->invoke($Me, ['action' => 'preference']));
     }
@@ -96,31 +96,31 @@ class MeTest extends TestCase
         $options = $Me->getUrlArgs();
 
         $this->assertEquals("POST", $properties['httpMethod']);
-        $this->assertArrayHasKey('actionArg1', $options);
-        $this->assertEquals('foo', $options['actionArg1']);
+        $this->assertArrayHasKey('actArg1', $options);
+        $this->assertEquals('foo', $options['actArg1']);
 
         $configureAction->invoke($Me, $Me::USER_ACTION_GET_PREFERENCE, ['foo']);
         $properties = $Me->getProperties();
         $options = $Me->getUrlArgs();
 
         $this->assertEquals("GET", $properties['httpMethod']);
-        $this->assertArrayHasKey('actionArg1', $options);
-        $this->assertEquals('foo', $options['actionArg1']);
+        $this->assertArrayHasKey('actArg1', $options);
+        $this->assertEquals('foo', $options['actArg1']);
 
         $configureAction->invoke($Me, $Me::USER_ACTION_UPDATE_PREFERENCE, ['foo']);
         $properties = $Me->getProperties();
         $options = $Me->getUrlArgs();
 
         $this->assertEquals("PUT", $properties['httpMethod']);
-        $this->assertArrayHasKey('actionArg1', $options);
-        $this->assertEquals('foo', $options['actionArg1']);
+        $this->assertArrayHasKey('actArg1', $options);
+        $this->assertEquals('foo', $options['actArg1']);
 
         $configureAction->invoke($Me, $Me::USER_ACTION_DELETE_PREFERENCE, ['foo']);
         $properties = $Me->getProperties();
         $options = $Me->getUrlArgs();
 
         $this->assertEquals("DELETE", $properties['httpMethod']);
-        $this->assertArrayHasKey('actionArg1', $options);
-        $this->assertEquals('foo', $options['actionArg1']);
+        $this->assertArrayHasKey('actArg1', $options);
+        $this->assertEquals('foo', $options['actArg1']);
     }
 }

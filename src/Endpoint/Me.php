@@ -44,7 +44,7 @@ class Me extends ModelEndpoint implements SugarEndpointInterface
     public const USER_ACTION_FOLLOWING = 'following';
 
     protected static array $_DEFAULT_PROPERTIES = [
-        self::PROPERTY_URL => 'me/$:action/$:actionArg1',
+        self::PROPERTY_URL => 'me/$:action/$:actArg1',
         self::PROPERTY_AUTH => true,
         self::PROPERTY_HTTP_METHOD => "GET",
     ];
@@ -115,7 +115,7 @@ class Me extends ModelEndpoint implements SugarEndpointInterface
                 case self::USER_ACTION_DELETE_PREFERENCE:
                 case self::USER_ACTION_CREATE_PREFERENCE:
                     if (isset($arguments[0])) {
-                        $this->_urlArgs['actionArg1'] = $arguments[0];
+                        $this->_urlArgs['actArg1'] = $arguments[0];
                     }
             }
         }
