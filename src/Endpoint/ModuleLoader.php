@@ -29,10 +29,12 @@ class ModuleLoader extends CollectionEndpoint
             $this->_filter = $args[0];
             unset($args[0]);
         }
+
         if (!empty($args[self::URL_ARG_FILTER])) {
             $this->_filter = $args[self::URL_ARG_FILTER];
             unset($args[self::URL_ARG_FILTER]);
         }
+
         return parent::setUrlArgs($args);
     }
 
@@ -41,6 +43,7 @@ class ModuleLoader extends CollectionEndpoint
         if (!empty($this->_filter)) {
             $urlArgs[self::URL_ARG_FILTER] = $this->_filter;
         }
+
         return parent::configureURL($urlArgs);
     }
 
