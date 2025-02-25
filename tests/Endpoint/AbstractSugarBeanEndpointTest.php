@@ -55,6 +55,7 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
         $Bean->setUrlArgs(['Accounts','12345']);
         $Bean->setCurrentAction(AbstractSugarBeanEndpoint::BEAN_ACTION_UPSERT);
+
         $Bean->sync_key = '67890';
         $Request = $Bean->compileRequest();
         $this->assertEquals("PATCH", $Request->getMethod());
@@ -780,7 +781,7 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $Bean->set([
             'name' => 'Test Account',
             'account_type' => 'Prospect',
-            'sync_key' => '098765'
+            'sync_key' => '098765',
         ]);
         $Bean->upsert();
 
@@ -811,7 +812,7 @@ class AbstractSugarBeanEndpointTest extends TestCase
             'account_type' => 'Prospect',
             'sync_key' => '098765',
             'sync_key_field_value' => '098765',
-            'fields' => ['test']
+            'fields' => ['test'],
         ], json_decode($payload, true));
         $this->assertEquals('12345', $Bean->id);
         $this->assertEquals('foobar', $Bean->test);

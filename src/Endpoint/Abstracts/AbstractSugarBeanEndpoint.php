@@ -188,11 +188,13 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
                 if (isset($data[AbstractSugarBeanCollectionEndpoint::SUGAR_FIELDS_DATA_PROPERTY])) {
                     $fields = $data[AbstractSugarBeanCollectionEndpoint::SUGAR_FIELDS_DATA_PROPERTY];
                 }
+
                 $data->reset();
                 $data->set($this->toArray());
                 if (!empty($fields)) {
                     $data[AbstractSugarBeanCollectionEndpoint::SUGAR_FIELDS_DATA_PROPERTY] = $fields;
                 }
+
                 $syncKeyField = $this->getSyncKeyField();
                 if (!empty($syncKeyField)) {
                     $data[Integrate::DATA_SYNC_KEY_FIELD] = $syncKeyField;
@@ -250,8 +252,10 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
                         } else {
                             $model = $body[Integrate::INTEGRATE_RESPONSE_PROP];
                         }
+
                         $this->syncFromApi($model);
                     }
+
                     return;
             }
         }

@@ -105,6 +105,7 @@ class Integrate extends AbstractSugarBeanEndpoint
                 $action = self::INTEGRATE_ACTION_RETRIEVE;
                 break;
         }
+
         if ($this->_action !== $action) {
             $this->_action = $action;
         }
@@ -188,6 +189,7 @@ class Integrate extends AbstractSugarBeanEndpoint
                             } else {
                                 $model = $body[Integrate::INTEGRATE_RESPONSE_PROP];
                             }
+
                             $this->syncFromApi($model);
                             if (isset($this->_sugarBean)) {
                                 $this->_sugarBean->set($this->toArray());

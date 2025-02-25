@@ -42,6 +42,7 @@ trait IntegrateSyncKeyTrait
         } elseif (property_exists($this, '_attributes')) {
             $key = $this->_attributes[$field];
         }
+
         //@codeCoverageIgnoreEnd
         return $key;
     }

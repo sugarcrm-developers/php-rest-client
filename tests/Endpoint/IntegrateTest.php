@@ -197,6 +197,7 @@ class IntegrateTest extends TestCase
         $this->client->mockResponses->append(new Response('200', [], json_encode($this->responsePayload)));
         $endpoint->setCurrentAction(Integrate::MODEL_ACTION_RETRIEVE);
         $endpoint->execute();
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('/rest/v11/integrate/Accounts', $request->getUri()->getPath());
