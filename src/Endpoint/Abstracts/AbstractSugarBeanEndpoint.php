@@ -184,8 +184,15 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
         $data = $this->getData();
         switch ($this->getCurrentAction()) {
             case self::BEAN_ACTION_UPSERT:
+                $fields = [];
+                if (isset($data[AbstractSugarBeanCollectionEndpoint::SUGAR_FIELDS_DATA_PROPERTY])) {
+                    $fields = $data[AbstractSugarBeanCollectionEndpoint::SUGAR_FIELDS_DATA_PROPERTY];
+                }
                 $data->reset();
                 $data->set($this->toArray());
+                if (!empty($fields)) {
+                    $data[AbstractSugarBeanCollectionEndpoint::SUGAR_FIELDS_DATA_PROPERTY] = $fields;
+                }
                 $syncKeyField = $this->getSyncKeyField();
                 if (!empty($syncKeyField)) {
                     $data[Integrate::DATA_SYNC_KEY_FIELD] = $syncKeyField;
@@ -215,7 +222,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     protected function parseResponse(Response $response): void
     {
         $this->resetUploads();
-        if ($response->getStatusCode() == 200) {
+        if (in_array($response->getStatusCode(), [200,201])) {
             $this->getData()->reset();
             switch ($this->getCurrentAction()) {
                 case self::BEAN_ACTION_TEMP_FILE_UPLOAD:
@@ -236,7 +243,15 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
                     return;
                 case self::BEAN_ACTION_UPSERT:
                     $body = $this->getResponseContent($response);
-                    $this->syncFromApi($this->parseResponseBodyToArray($body, Integrate::INTEGRATE_RESPONSE_PROP));
+                    $body = $this->parseResponseBodyToArray($body);
+                    if (!empty($body[Integrate::INTEGRATE_RESPONSE_PROP])) {
+                        if (is_string($body[Integrate::INTEGRATE_RESPONSE_PROP])) {
+                            $model = ['id' => $body[Integrate::INTEGRATE_RESPONSE_PROP]];
+                        } else {
+                            $model = $body[Integrate::INTEGRATE_RESPONSE_PROP];
+                        }
+                        $this->syncFromApi($model);
+                    }
                     return;
             }
         }

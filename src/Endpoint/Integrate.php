@@ -159,7 +159,7 @@ class Integrate extends AbstractSugarBeanEndpoint
 
     protected function parseResponse(Response $response): void
     {
-        if ($response->getStatusCode() == 200) {
+        if (in_array($response->getStatusCode(), [200,201])) {
             switch ($this->getCurrentAction()) {
                 case self::INTEGRATE_ACTION_DELETE:
                 case self::MODEL_ACTION_DELETE:
@@ -174,16 +174,24 @@ class Integrate extends AbstractSugarBeanEndpoint
                         $syncKeyField = $this->getSyncKeyField();
                         $syncKey = $this->getSyncKey();
                         $this->_sugarBean->set($syncKeyField ?: self::SYNC_KEY, $syncKey);
-                        if ($syncKeyField !== '' && $syncKeyField !== '0') {
+                        if ($syncKeyField !== '' && $syncKeyField !== self::SYNC_KEY) {
                             $this->_sugarBean->setSyncKeyField($syncKeyField);
                         }
                     }
 
                     if ($this->getCurrentAction() !== self::INTEGRATE_ACTION_SET_SK) {
                         $body = $this->getResponseContent($response);
-                        $this->syncFromApi($this->parseResponseBodyToArray($body, $this->getModelResponseProp()));
-                        if (isset($this->_sugarBean)) {
-                            $this->_sugarBean->set($this->toArray());
+                        $body = $this->parseResponseBodyToArray($body);
+                        if (!empty($body[Integrate::INTEGRATE_RESPONSE_PROP])) {
+                            if (is_string($body[Integrate::INTEGRATE_RESPONSE_PROP])) {
+                                $model = ['id' => $body[Integrate::INTEGRATE_RESPONSE_PROP]];
+                            } else {
+                                $model = $body[Integrate::INTEGRATE_RESPONSE_PROP];
+                            }
+                            $this->syncFromApi($model);
+                            if (isset($this->_sugarBean)) {
+                                $this->_sugarBean->set($this->toArray());
+                            }
                         }
                     }
             }

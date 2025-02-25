@@ -11,7 +11,7 @@ use Sugarcrm\REST\Endpoint\Note;
  */
 trait NoteAttachmentsTrait
 {
-    private $_attachments = [
+    private array $_attachments = [
         'add' => [],
         'delete' => [],
         'create' => [],
@@ -26,7 +26,7 @@ trait NoteAttachmentsTrait
      * Reset the attachments link to default blank values
      * @return $this
      */
-    public function resetAttachments()
+    public function resetAttachments(): static
     {
         $this->_attachments = [
             'add' => [],

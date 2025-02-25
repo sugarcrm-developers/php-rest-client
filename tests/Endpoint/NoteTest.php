@@ -36,6 +36,8 @@ class NoteTest extends TestCase
     }
 
     /**
+     * @covers \Sugarcrm\REST\Endpoint\Traits\NoteAttachmentsTrait::resetAttachments
+     * @covers \Sugarcrm\REST\Endpoint\Traits\NoteAttachmentsTrait::getAttachmentsLinkField
      * @covers ::resetAttachments
      * @covers ::deleteAttachments
      * @covers ::clear
@@ -120,6 +122,8 @@ class NoteTest extends TestCase
      * @covers ::multiAttach
      * @covers ::parseResponse
      * @covers ::configurePayload
+     * @covers \Sugarcrm\REST\Endpoint\Traits\NoteAttachmentsTrait::configureAttachmentsPayload
+     * @covers \Sugarcrm\REST\Endpoint\Traits\NoteAttachmentsTrait::parseAttachmentUploadResponse
      * @covers ::configureUrl
      */
     public function testMultiattach(): void
