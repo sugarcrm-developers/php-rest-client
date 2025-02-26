@@ -7,6 +7,7 @@
 namespace Sugarcrm\REST\Tests\Endpoint;
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarBeanEndpoint;
 use Sugarcrm\REST\Endpoint\AuditLog;
 use Sugarcrm\REST\Endpoint\Data\FilterData;
 use MRussell\REST\Exception\Endpoint\InvalidRequest;
@@ -51,6 +52,15 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $this->assertEquals("GET", $Request->getMethod());
         $this->assertEquals('http://localhost/rest/v11/Foo/bar', $Request->getUri()->__toString());
         $this->assertEmpty($Request->getBody()->getContents());
+
+        $Bean->setUrlArgs(['Accounts','12345']);
+        $Bean->setCurrentAction(AbstractSugarBeanEndpoint::BEAN_ACTION_UPSERT);
+
+        $Bean->sync_key = '67890';
+        $Request = $Bean->compileRequest();
+        $this->assertEquals("PATCH", $Request->getMethod());
+        $this->assertEquals('http://localhost/rest/v11/Accounts/sync_key/67890', $Request->getUri()->__toString());
+        $this->assertNotEmpty($Request->getBody()->getContents());
     }
 
     /**
@@ -755,5 +765,56 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $this->assertStringStartsWith("12345", basename($Bean->getDownloadedFile()));
         $this->assertEquals("test", file_get_contents($Bean->getDownloadedFile()));
         unlink($Bean->getDownloadedFile());
+    }
+
+    /**
+     * @covers ::configureAction
+     * @covers ::configurePayload
+     * @covers ::parseResponse
+     */
+    public function testUpsertAction(): void
+    {
+        $this->client->mockResponses->append(new Response(201, [], json_encode(['record' => '12345'])));
+        $Bean = new SugarBean();
+        $Bean->setClient($this->client);
+        $Bean->setModule('Accounts');
+        $Bean->set([
+            'name' => 'Test Account',
+            'account_type' => 'Prospect',
+            'sync_key' => '098765',
+        ]);
+        $Bean->upsert();
+
+        $request = $this->client->mockResponses->getLastRequest();
+        $this->assertEquals('upsert', $Bean->getCurrentAction());
+        $this->assertEquals('/rest/v11/Accounts/sync_key/098765', $request->getUri()->getPath());
+        $this->assertEquals('PATCH', $request->getMethod());
+        $payload = $request->getBody()->getContents();
+        $this->assertEquals([
+            'name' => 'Test Account',
+            'account_type' => 'Prospect',
+            'sync_key' => '098765',
+            'sync_key_field_value' => '098765',
+        ], json_decode($payload, true));
+        $this->assertEquals('12345', $Bean->id);
+
+        $this->client->mockResponses->append(new Response(201, [], json_encode(['record' => ['test' => 'foobar']])));
+        $Bean->getData()['fields'] = ['test'];
+        $Bean->upsert();
+
+        $request = $this->client->mockResponses->getLastRequest();
+        $this->assertEquals('/rest/v11/Accounts/sync_key/098765', $request->getUri()->getPath());
+        $this->assertEquals('PATCH', $request->getMethod());
+        $payload = $request->getBody()->getContents();
+        $this->assertEquals([
+            'id' => '12345',
+            'name' => 'Test Account',
+            'account_type' => 'Prospect',
+            'sync_key' => '098765',
+            'sync_key_field_value' => '098765',
+            'fields' => ['test'],
+        ], json_decode($payload, true));
+        $this->assertEquals('12345', $Bean->id);
+        $this->assertEquals('foobar', $Bean->test);
     }
 }

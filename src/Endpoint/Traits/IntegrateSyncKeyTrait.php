@@ -38,10 +38,12 @@ trait IntegrateSyncKeyTrait
 
         if (method_exists($this, 'get')) {
             $key = $this->get($field);
+            //@codeCoverageIgnoreStart
         } elseif (property_exists($this, '_attributes')) {
             $key = $this->_attributes[$field];
         }
 
+        //@codeCoverageIgnoreEnd
         return $key;
     }
 

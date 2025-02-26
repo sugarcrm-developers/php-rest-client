@@ -19,7 +19,11 @@ try {
             'sync_key' => 'foobar',
         ]);
         $account->upsert();
-        echo "Record: " . json_encode($account->toArray(), JSON_PRETTY_PRINT) . "\n";
+        echo "Record Created: " . json_encode($account->toArray(), JSON_PRETTY_PRINT) . "\n";
+        $account->account_type = 'Prospect';
+        $account->email1 = 'test@example.com';
+        $account->upsert();
+        echo "Account Updated: " . json_encode($account->toArray(), JSON_PRETTY_PRINT) . "\n";
 
         $contact = $SugarAPI->module('Contacts');
         $contact->set([

@@ -96,7 +96,7 @@ class Note extends SugarBean
      * Reset the attachments link to default blank values
      * @return $this
      */
-    public function resetAttachments(): self
+    public function resetAttachments(): static
     {
         $this->resetAttachmentsProp();
         $this->getData()->offsetUnset($this->getAttachmentsLinkField());

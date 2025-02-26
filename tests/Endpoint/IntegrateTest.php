@@ -64,6 +64,42 @@ class IntegrateTest extends TestCase
         $this->assertEquals(Integrate::INTEGRATE_ACTION_DELETE, $endpoint->getCurrentAction());
     }
 
+    public function testUpsert(): void
+    {
+        $this->client->mockResponses->append(new Response('201', [], json_encode(['record' => '12345'])));
+        $endpoint = new Integrate();
+        $endpoint->setClient($this->client);
+        $endpoint->setModule('Accounts');
+        $endpoint['name'] = 'Test Account';
+        $endpoint['sync_key'] = 'test';
+        $endpoint->upsert();
+        $request = $this->client->mockResponses->getLastRequest();
+        $this->assertEquals('PATCH', $request->getMethod());
+        $this->assertEquals('/rest/v11/integrate/Accounts', $request->getUri()->getPath());
+        $body = json_decode($request->getBody()->getContents(), true);
+        $this->assertNotEmpty($body);
+        $this->assertEquals('test', $body[Integrate::DATA_SYNC_KEY_VALUE]);
+        $this->assertEquals('test', $endpoint->getSyncKey());
+        $this->assertEquals('12345', $endpoint->getId());
+
+        $this->client->mockResponses->append(new Response('201', [], json_encode(['record' => ['foobar_c' => 'test', 'account_type' => 'Prospect']])));
+        $endpoint->setSyncKeyField('sync_key');
+        $endpoint->getData()['fields'] = 'foobar_c,account_type';
+        $endpoint->upsert();
+        $request = $this->client->mockResponses->getLastRequest();
+        $this->assertEquals('PATCH', $request->getMethod());
+        $this->assertEquals('/rest/v11/integrate/Accounts/sync_key/test', $request->getUri()->getPath());
+        $body = json_decode($request->getBody()->getContents(), true);
+        $this->assertNotEmpty($body);
+        $this->assertEquals('test', $body[Integrate::DATA_SYNC_KEY_VALUE]);
+        $this->assertEquals('12345', $body['id']);
+        $this->assertEquals('foobar_c,account_type', $body['fields']);
+        $this->assertEquals('test', $endpoint->getSyncKey());
+        $this->assertEquals('12345', $endpoint->getId());
+        $this->assertEquals('test', $endpoint->foobar_c);
+        $this->assertEquals('Prospect', $endpoint['account_type']);
+    }
+
     /**
      * @covers ::getSyncKey
      * @covers ::getSyncKeyField
@@ -161,6 +197,7 @@ class IntegrateTest extends TestCase
         $this->client->mockResponses->append(new Response('200', [], json_encode($this->responsePayload)));
         $endpoint->setCurrentAction(Integrate::MODEL_ACTION_RETRIEVE);
         $endpoint->execute();
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('/rest/v11/integrate/Accounts', $request->getUri()->getPath());
