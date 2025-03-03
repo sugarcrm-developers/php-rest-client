@@ -10,3 +10,4 @@ docs/
 /.phive/
 /tools/
 /.php-cs-fixer.cache
+.vscode/
