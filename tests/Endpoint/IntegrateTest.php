@@ -101,26 +101,23 @@ class IntegrateTest extends TestCase
     }
     public function testUpsertWithSetField(): void
     {
-        $this->client->mockResponses->append(new Response('201'));
+        $this->client->mockResponses->append(new Response('201'), new Response('201'));
         $endpoint = new Integrate();
         $endpoint->setClient($this->client);
         $endpoint->setModule('Accounts');
         $endpoint['name'] = 'Test Account';
         $endpoint['sync_key'] = 'test';
-        $Reflection = new \ReflectionClass($endpoint::class);
-        $configurePayload = $Reflection->getMethod('configurePayload');
-        $configurePayload->setAccessible(true);
-        $payload = $configurePayload->invoke($endpoint)->toArray();
-        $this->assertArrayNotHasKey('fields', $payload);
-
-        $this->client->mockResponses->append(new Response('201'));
-        $endpoint->setFields(['foobar_c', 'account_type']);
         $endpoint->upsert();
+        $request = $this->client->mockResponses->getLastRequest();
+        $body = json_decode($request->getBody()->getContents(), true);
+        $this->assertArrayNotHasKey('fields', $body);
 
-        $payload = $configurePayload->invoke($endpoint)->toArray();
-        $this->assertArrayHasKey('fields', $payload);
-        $fields = $payload['fields'];
-        $this->assertEquals("foobar_c,account_type", $fields);
+        $endpoint->setFields(['foobar', 'bar']);
+        $endpoint->upsert();
+        $request = $this->client->mockResponses->getLastRequest();
+        $body = json_decode($request->getBody()->getContents(), true);
+        $this->assertArrayHasKey('fields', $body);
+        $this->assertEquals("foobar,bar", $body['fields']);
     }
 
     /**
