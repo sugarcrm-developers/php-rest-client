@@ -99,6 +99,26 @@ class IntegrateTest extends TestCase
         $this->assertEquals('test', $endpoint->foobar_c);
         $this->assertEquals('Prospect', $endpoint['account_type']);
     }
+    public function testUpsertWithSetField(): void
+    {
+        $this->client->mockResponses->append(new Response('201'), new Response('201'));
+        $endpoint = new Integrate();
+        $endpoint->setClient($this->client);
+        $endpoint->setModule('Accounts');
+        $endpoint['name'] = 'Test Account';
+        $endpoint['sync_key'] = 'test';
+        $endpoint->upsert();
+        $request = $this->client->mockResponses->getLastRequest();
+        $body = json_decode($request->getBody()->getContents(), true);
+        $this->assertArrayNotHasKey('fields', $body);
+
+        $endpoint->setFields(['foobar', 'bar']);
+        $endpoint->upsert();
+        $request = $this->client->mockResponses->getLastRequest();
+        $body = json_decode($request->getBody()->getContents(), true);
+        $this->assertArrayHasKey('fields', $body);
+        $this->assertEquals("foobar,bar", $body['fields']);
+    }
 
     /**
      * @covers ::getSyncKey

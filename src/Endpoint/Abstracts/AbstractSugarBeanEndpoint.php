@@ -169,7 +169,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
                 $this->_uploadFile['field'] => $this->_uploadFile['path'],
             ]);
             $data = null;
-        } elseif ($this->getCurrentAction() === self::MODEL_ACTION_RETRIEVE) {
+        } elseif (in_array($this->getCurrentAction(), [self::MODEL_ACTION_RETRIEVE, self::BEAN_ACTION_UPSERT])) {
             $data = $this->configureFieldsDataProps($data);
         }
 
