@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ©[2022] SugarCRM Inc.  Licensed by SugarCRM under the Apache 2.0 license.
  */
@@ -22,11 +23,11 @@ use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarEndpoint;
  */
 class Rest extends Generic
 {
-    protected static array $_DEFAULT_PROPERTIES = array(
+    protected static array $_DEFAULT_PROPERTIES = [
         self::PROPERTY_URL => '$endpoint',
         self::PROPERTY_AUTH => true,
-        self::PROPERTY_HTTP_METHOD => "GET"
-    );
+        self::PROPERTY_HTTP_METHOD => "GET",
+    ];
 
     protected array $headers = [];
 

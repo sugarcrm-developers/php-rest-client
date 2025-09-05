@@ -166,6 +166,6 @@ class SugarEndpointProvider extends VersionedEndpointProvider
             self::ENDPOINT_NAME => 'rest',
             self::ENDPOINT_CLASS => Rest::class,
             self::ENDPOINT_PROPERTIES => [],
-        ]
+        ],
     ];
 }
