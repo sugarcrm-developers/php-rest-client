@@ -49,7 +49,7 @@ class Rest extends Generic
         return $request;
     }
 
-    public function get($data = null)
+    public function get(mixed $data = null): static
     {
         $this->setProperty(self::PROPERTY_HTTP_METHOD, 'GET');
         if (!is_null($data)) {
@@ -58,7 +58,7 @@ class Rest extends Generic
         return $this->execute();
     }
 
-    public function post($data = null)
+    public function post(mixed $data = null): static
     {
         $this->setProperty(self::PROPERTY_HTTP_METHOD, 'POST');
         if (!is_null($data)) {
@@ -67,7 +67,7 @@ class Rest extends Generic
         return $this->execute();
     }
 
-    public function put($data = null)
+    public function put(mixed $data = null): static
     {
         $this->setProperty(self::PROPERTY_HTTP_METHOD, 'PUT');
         if (!is_null($data)) {
@@ -76,13 +76,13 @@ class Rest extends Generic
         return $this->execute();
     }
 
-    public function delete()
+    public function delete(): static
     {
         $this->setProperty(self::PROPERTY_HTTP_METHOD, 'DELETE');
         return $this->execute();
     }
 
-    public function patch($data = null)
+    public function patch(mixed $data = null): static
     {
         $this->setProperty(self::PROPERTY_HTTP_METHOD, 'PATCH');
         if (!is_null($data)) {
