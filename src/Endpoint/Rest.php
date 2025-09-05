@@ -19,7 +19,6 @@ use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarEndpoint;
  * $client->rest('custom/endpoint')->withHeaders($headers)->get();
  * $client->rest('Contacts')->setData(['fields' => 'id,first_name,last_name', 'max_num' => 1])->get();
  * etc.
- * @package Sugarcrm\REST\Endpoint
  */
 class Rest extends Generic
 {
