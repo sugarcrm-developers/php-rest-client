@@ -12,6 +12,4 @@ namespace Sugarcrm\REST\Endpoint\Data\Filters\Operator;
 class NotNull extends IsNull
 {
     public const OPERATOR = '$not_null';
-
-    protected static $_OPERATOR = self::OPERATOR;
 }

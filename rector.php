@@ -14,7 +14,9 @@ return RectorConfig::configure()
         SimplifyEmptyCheckOnEmptyArrayRector::class,
     ])
     ->withSets([
-        SetList::PHP_80,
+        SetList::PHP_82,
+        SetList::PHP_83,
+        SetList::PHP_84,
         SetList::DEAD_CODE,
         SetList::CODE_QUALITY,
         SetList::CODING_STYLE,

@@ -16,7 +16,7 @@ use Sugarcrm\REST\Endpoint\Data\Filters\Operator\GreaterThan;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\GreaterThanOrEqual;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\DateBetween;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\DateRange;
-use Sugarcrm\REST\Exception\Filter\MissingFieldForDateExpression;
+use Sugarcrm\REST\Exception\Filter\MissingFieldForFilterExpression;
 use Sugarcrm\REST\Exception\Filter\UnknownFilterOperator;
 
 /**
@@ -54,9 +54,9 @@ class DateExpression extends AbstractExpression
 {
     public const OPERATOR = '';
 
-    protected $dateField;
+    protected string $dateField;
 
-    protected $ranges = [
+    protected array $ranges = [
         'yesterday' => 'yesterday',
         'today' => 'today',
         'tomorrow' => 'tomorrow',
@@ -72,10 +72,7 @@ class DateExpression extends AbstractExpression
         'nextYear' => 'next_year',
     ];
 
-    /**
-     * @var array
-     */
-    protected $operators = [
+    protected array $operators = [
         'equals' => Equals::class,
         'notEquals' => NotEquals::class,
         'isNull' => IsNull::class,
@@ -94,10 +91,7 @@ class DateExpression extends AbstractExpression
         'between' => DateBetween::class,
     ];
 
-    /**
-     * @var array
-     */
-    protected $expressions = [];
+    protected array $expressions = [];
 
     /**
      * DateExpression constructor.
@@ -114,21 +108,32 @@ class DateExpression extends AbstractExpression
      * @param $field
      * @return $this
      */
-    public function field($field): self
+    public function field(string $field): self
     {
         $this->dateField = $field;
         return $this;
     }
 
+    protected function isDateRange(string $name): string|false
+    {
+        $range = false;
+        if (array_key_exists($name, $this->ranges)) {
+            $range = $this->ranges[$name];
+        } elseif (in_array($name, $this->ranges)) {
+            $range = $name;
+        }
+
+        return $range;
+    }
+
     public function __call($name, $arguments)
     {
         if (empty($this->dateField)) {
-            throw new MissingFieldForDateExpression();
+            throw new MissingFieldForFilterExpression();
         }
 
         $args = [$this->dateField];
-        if (array_key_exists($name, $this->ranges)) {
-            $range = $this->ranges[$name];
+        if ($range = $this->isDateRange($name)) {
             $args[] = $range;
             $Op = new DateRange($args);
             $this->filters[0] = $Op;

@@ -8,7 +8,7 @@ namespace Sugarcrm\REST\Tests\Endpoint\Data\Filters;
 
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\REST\Exception\Filter\UnknownFilterOperator;
-use Sugarcrm\REST\Exception\Filter\MissingFieldForDateExpression;
+use Sugarcrm\REST\Exception\Filter\MissingFieldForFilterExpression;
 use Sugarcrm\REST\Endpoint\Data\Filters\Expression\DateExpression;
 
 /**
@@ -54,7 +54,6 @@ class DateExpressionTest extends TestCase
 
         $this->assertEquals('test', $dateField->getValue($Date));
         $Date = new DateExpression();
-        $this->assertEmpty($dateField->getValue($Date));
         $this->assertEquals($Date, $Date->field('test'));
         $this->assertEquals('test', $dateField->getValue($Date));
     }
@@ -103,7 +102,6 @@ class DateExpressionTest extends TestCase
 
     /**
      * @covers ::__call
-     * @expectedException Sugarcrm\REST\Exception\Filter\UnknownFilterOperator
      */
     public function testUnknownFilterOperatorException(): void
     {
@@ -116,13 +114,12 @@ class DateExpressionTest extends TestCase
 
     /**
      * @covers::__call
-     * @expectedException Sugarcrm\REST\Exception\Filter\MissingFieldForDateExpression
      */
     public function testMissingFieldException(): void
     {
         $Expression = new DateExpression();
-        $this->expectException(MissingFieldForDateExpression::class);
-        $this->expectExceptionMessage("Field not configured on DateExpression");
+        $this->expectException(MissingFieldForFilterExpression::class);
+        $this->expectExceptionMessage("Field not configured on Filter Expression");
         $Expression->yesterday();
     }
 }

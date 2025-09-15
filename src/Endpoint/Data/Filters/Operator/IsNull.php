@@ -13,9 +13,7 @@ class IsNull extends AbstractOperator
 {
     public const OPERATOR = '$is_null';
 
-    protected static $_OPERATOR = self::OPERATOR;
-
-    public function setValue($value): self
+    public function setValue(mixed $value): static
     {
         $this->value = null;
         return $this;
@@ -24,7 +22,7 @@ class IsNull extends AbstractOperator
     public function compile(): array
     {
         return [
-            $this->getField() => [static::$_OPERATOR],
+            $this->getField() => [ $this->getOperator() ],
         ];
     }
 }
