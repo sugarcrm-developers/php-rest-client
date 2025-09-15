@@ -29,26 +29,6 @@ class Rest extends Generic
         self::PROPERTY_HTTP_METHOD => "GET",
     ];
 
-    protected array $headers = [];
-
-    public function withHeaders(array $headers)
-    {
-        $this->headers = $headers;
-        return $this;
-    }
-
-    protected function configureRequest(Request $request, $data): Request
-    {
-        $request = parent::configureRequest($request, $data);
-
-        if (!empty($this->headers)) {
-            foreach ($this->headers as $header => $value) {
-                $request = $request->withHeader($header, $value);
-            }
-        }
-        return $request;
-    }
-
     public function get(mixed $data = null): static
     {
         $this->setProperty(self::PROPERTY_HTTP_METHOD, 'GET');

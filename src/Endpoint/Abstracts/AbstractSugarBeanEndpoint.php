@@ -22,6 +22,7 @@ use Sugarcrm\REST\Endpoint\AuditLog;
 use Sugarcrm\REST\Endpoint\Integrate;
 use Sugarcrm\REST\Endpoint\SugarEndpointInterface;
 use Sugarcrm\REST\Endpoint\Traits\CompileRequestTrait;
+use Sugarcrm\REST\Endpoint\Traits\CustomHeadersTrait;
 use Sugarcrm\REST\Endpoint\Traits\FieldsDataTrait;
 use Sugarcrm\REST\Endpoint\Traits\IntegrateSyncKeyTrait;
 use Sugarcrm\REST\Endpoint\Traits\ModuleAwareTrait;
@@ -53,6 +54,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     use FieldsDataTrait;
     use FileUploadsTrait;
     use IntegrateSyncKeyTrait;
+    use CustomHeadersTrait;
 
     public const MODEL_ACTION_VAR = 'action';
 
@@ -173,7 +175,7 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
             $data = $this->configureFieldsDataProps($data);
         }
 
-        return parent::configureRequest($request, $data);
+        return parent::configureRequest($this->addCustomHeadersToRequest($request), $data);
     }
 
     /**

@@ -14,6 +14,7 @@ use Sugarcrm\REST\Endpoint\Integrate;
 use Sugarcrm\REST\Endpoint\MLPackage;
 use Sugarcrm\REST\Endpoint\ModuleLoader;
 use Sugarcrm\REST\Endpoint\Ping;
+use Sugarcrm\REST\Endpoint\Rest;
 use Sugarcrm\REST\Endpoint\Smart;
 use Sugarcrm\REST\Endpoint\SugarBean;
 use Sugarcrm\REST\Endpoint\ModuleFilter;
@@ -48,6 +49,7 @@ use Sugarcrm\REST\Endpoint\Provider\SugarEndpointProvider;
  * @method ModuleLoader moduleLoader() -
  * @method MLPackage mlp(string $id = null)
  * @method Integrate integrate(string $module = '', string $id = '')
+ * @method Rest rest(string $endpoint = '')
  */
 class SugarApi extends AbstractClient implements PlatformAwareInterface
 {

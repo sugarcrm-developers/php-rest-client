@@ -6,6 +6,7 @@
 
 namespace Sugarcrm\REST\Endpoint\Abstracts;
 
+use GuzzleHttp\Psr7\Request;
 use MRussell\REST\Exception\Endpoint\InvalidRequest;
 use GuzzleHttp\Psr7\Response;
 use MRussell\REST\Endpoint\Data\AbstractEndpointData;
@@ -13,6 +14,7 @@ use MRussell\REST\Endpoint\CollectionEndpoint;
 use MRussell\REST\Traits\PsrLoggerTrait;
 use Sugarcrm\REST\Endpoint\SugarEndpointInterface;
 use Sugarcrm\REST\Endpoint\Traits\CompileRequestTrait;
+use Sugarcrm\REST\Endpoint\Traits\CustomHeadersTrait;
 
 /**
  * Provides access to a multi-bean collection retrieved from Sugar 7 REST Api
@@ -23,6 +25,7 @@ abstract class AbstractSugarCollectionEndpoint extends CollectionEndpoint implem
 {
     use CompileRequestTrait;
     use PsrLoggerTrait;
+    use CustomHeadersTrait;
 
     public const SUGAR_OFFSET_PROPERTY = 'offset';
 
@@ -80,6 +83,11 @@ abstract class AbstractSugarCollectionEndpoint extends CollectionEndpoint implem
         $data[self::SUGAR_OFFSET_PROPERTY] = $this->getOffset();
         $data[self::SUGAR_LIMIT_PROPERTY] = $this->getLimit();
         return $data;
+    }
+
+    protected function configureRequest(Request $request, $data): Request
+    {
+        return parent::configureRequest($this->addCustomHeadersToRequest($request), $data);
     }
 
     /**
