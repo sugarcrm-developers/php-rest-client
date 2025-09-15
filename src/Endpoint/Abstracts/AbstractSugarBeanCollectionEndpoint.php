@@ -6,8 +6,10 @@
 
 namespace Sugarcrm\REST\Endpoint\Abstracts;
 
+use GuzzleHttp\Psr7\Request;
 use Sugarcrm\REST\Endpoint\SugarBean;
 use MRussell\REST\Endpoint\Abstracts\AbstractModelEndpoint;
+use Sugarcrm\REST\Endpoint\Traits\CustomHeadersTrait;
 use Sugarcrm\REST\Endpoint\Traits\FieldsDataTrait;
 use Sugarcrm\REST\Endpoint\Traits\ModuleAwareTrait;
 
@@ -22,6 +24,7 @@ abstract class AbstractSugarBeanCollectionEndpoint extends AbstractSugarCollecti
 {
     use FieldsDataTrait;
     use ModuleAwareTrait;
+    use CustomHeadersTrait;
 
     public const SUGAR_ORDERBY_DATA_PROPERTY = 'order_by';
 
@@ -95,6 +98,11 @@ abstract class AbstractSugarBeanCollectionEndpoint extends AbstractSugarCollecti
         }
 
         return $this->configureFieldsDataProps($data);
+    }
+
+    protected function configureRequest(Request $request, $data): Request
+    {
+        return parent::configureRequest($this->addCustomHeadersToRequest($request), $data);
     }
 
     /**

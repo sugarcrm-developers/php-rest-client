@@ -6,11 +6,13 @@
 
 namespace Sugarcrm\REST\Endpoint\Abstracts;
 
+use GuzzleHttp\Psr7\Request;
 use MRussell\REST\Endpoint\Data\ValidatedEndpointData;
 use MRussell\REST\Endpoint\SmartEndpoint;
 use MRussell\REST\Traits\PsrLoggerTrait;
 use Sugarcrm\REST\Endpoint\SugarEndpointInterface;
 use Sugarcrm\REST\Endpoint\Traits\CompileRequestTrait;
+use Sugarcrm\REST\Endpoint\Traits\CustomHeadersTrait;
 
 /**
  * Provide a smarter interface for Endpoints, to better manage passed in data
@@ -20,6 +22,12 @@ abstract class AbstractSmartSugarEndpoint extends SmartEndpoint implements Sugar
 {
     use CompileRequestTrait;
     use PsrLoggerTrait;
+    use CustomHeadersTrait;
 
     protected string $_dataInterface = ValidatedEndpointData::class;
+
+    protected function configureRequest(Request $request, $data): Request
+    {
+        return parent::configureRequest($this->addCustomHeadersToRequest($request), $data);
+    }
 }
