@@ -12,6 +12,4 @@ namespace Sugarcrm\REST\Endpoint\Data\Filters\Operator;
 class Contains extends AbstractOperator
 {
     public const OPERATOR = '$contains';
-
-    protected static $_OPERATOR = self::OPERATOR;
 }

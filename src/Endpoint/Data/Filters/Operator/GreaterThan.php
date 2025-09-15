@@ -12,6 +12,4 @@ namespace Sugarcrm\REST\Endpoint\Data\Filters\Operator;
 class GreaterThan extends AbstractOperator
 {
     public const OPERATOR = '$gt';
-
-    protected static $_OPERATOR = self::OPERATOR;
 }

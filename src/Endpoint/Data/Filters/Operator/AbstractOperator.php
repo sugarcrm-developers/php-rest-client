@@ -16,21 +16,18 @@ abstract class AbstractOperator implements FilterInterface
 {
     /**
      * The Sugar Operator representation
-     * @var string
      */
-    protected static $_OPERATOR = '';
+    protected string $operator;
 
     /**
      * The field the Operator applies to
-     * @var string
      */
-    protected $field;
+    protected string $field;
 
     /**
      * The value being the Operator compares to
-     * @var mixed
      */
-    protected $value;
+    protected mixed $value;
 
 
     public function __construct(array $arguments = [])
@@ -48,24 +45,28 @@ abstract class AbstractOperator implements FilterInterface
         }
     }
 
+    public function getOperator(): string
+    {
+        return $this->operator ?? static::OPERATOR;
+    }
+
     /**
      * Set the field on the Operator
      * @param $field string
      * @return $this
      */
-    public function setField($field)
+    public function setField(string $field): static
     {
-        $this->field = (string) $field;
+        $this->field = $field;
         return $this;
     }
 
     /**
      * Get the field configured on the Operator
-     * @return string
      */
-    public function getField()
+    public function getField(): string
     {
-        return $this->field;
+        return $this->field ?? '';
     }
 
     /**
@@ -73,7 +74,7 @@ abstract class AbstractOperator implements FilterInterface
      * @param $value
      * @return $this
      */
-    public function setValue($value)
+    public function setValue(mixed $value): static
     {
         $this->value = $value;
         return $this;
@@ -81,11 +82,10 @@ abstract class AbstractOperator implements FilterInterface
 
     /**
      * Get the value configure on the Operator
-     * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
-        return $this->value;
+        return $this->value ?? null;
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class AbstractOperator implements FilterInterface
     {
         return [
             $this->getField() => [
-                static::$_OPERATOR => $this->getValue(),
+                $this->getOperator() => $this->getValue(),
             ],
         ];
     }

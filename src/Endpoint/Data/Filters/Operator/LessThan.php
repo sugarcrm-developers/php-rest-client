@@ -12,6 +12,4 @@ namespace Sugarcrm\REST\Endpoint\Data\Filters\Operator;
 class LessThan extends AbstractOperator
 {
     public const OPERATOR = '$lt';
-
-    protected static $_OPERATOR = self::OPERATOR;
 }
