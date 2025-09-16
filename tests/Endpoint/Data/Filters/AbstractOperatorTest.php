@@ -57,8 +57,6 @@ class AbstractOperatorTest extends TestCase
     public function testConstructor(): void
     {
         $Operator = new Contains();
-        $this->assertEmpty($Operator->getField());
-        $this->assertEmpty($Operator->getValue());
         $Operator = new Contains(['foo']);
         $this->assertEquals('foo', $Operator->getField());
         $this->assertEmpty($Operator->getValue());

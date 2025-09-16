@@ -6,7 +6,12 @@
 
 namespace Sugarcrm\REST\Endpoint\Data\Filters\Expression;
 
+use Sugarcrm\REST\Endpoint\Data\Filters\Creator;
+use Sugarcrm\REST\Endpoint\Data\Filters\Favorite;
+use Sugarcrm\REST\Endpoint\Data\Filters\Following;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\Equals;
+use Sugarcrm\REST\Endpoint\Data\Filters\Operator\InRadiusFromCoords;
+use Sugarcrm\REST\Endpoint\Data\Filters\Operator\InRadiusFromZip;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\NotEquals;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\Starts;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\Ends;
@@ -22,6 +27,8 @@ use Sugarcrm\REST\Endpoint\Data\Filters\Operator\GreaterThanOrEqual;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\Between;
 use Sugarcrm\REST\Endpoint\Data\Filters\Operator\DateBetween;
 use Sugarcrm\REST\Endpoint\Data\Filters\FilterInterface;
+use Sugarcrm\REST\Endpoint\Data\Filters\Owner;
+use Sugarcrm\REST\Endpoint\Data\Filters\Tracker;
 use Sugarcrm\REST\Exception\Filter\UnknownFilterOperator;
 
 /**
@@ -29,41 +36,43 @@ use Sugarcrm\REST\Exception\Filter\UnknownFilterOperator;
  * @package Sugarcrm\REST\Endpoint\Data\Filters\Expression
  * @method AndExpression        and()
  * @method OrExpression         or()
- * @method DateExpression       date($field)
- * @method $this                equals($field,$value)
- * @method $this                notEquals($field,$value)
- * @method $this                starts($field,$value)
- * @method $this                ends($field,$value)
- * @method $this                contains($field,$value)
- * @method $this                in($field,array $value)
- * @method $this                notIn($field,array $value)
- * @method $this                isNull($field)
- * @method $this                notNull($field)
- * @method $this                lt($field,$value)
- * @method $this                lessThan($field,$value)
- * @method $this                lte($field,$value)
- * @method $this                lessThanOrEqualTo($field,$value)
- * @method $this                lessThanOrEquals($field,$value)
- * @method $this                greaterThan($field,$value)
- * @method $this                gte($field,$value)
- * @method $this                greaterThanOrEqualTo($field,$value)
- * @method $this                greaterThanOrEquals($field,$value)
- * @method $this                between($field,$value)
- * @method $this                dateBetween($field,$value)
+ * @method DateExpression       date(string $field)
+ * @method DistanceExpression   distance(string $field)
+ * @method static                equals(string $field, mixed $value)
+ * @method static                notEquals(string $field, mixed $value)
+ * @method static                starts(string $field,mixed $value)
+ * @method static                ends(string $field, mixed $value)
+ * @method static                contains(string $field, mixed $value)
+ * @method static                in(string $field, array $value)
+ * @method static                notIn(string $field, array $value)
+ * @method static                isNull(string $field)
+ * @method static                notNull(string $field)
+ * @method static                lt(string $field,int|float $value)
+ * @method static                lessThan(string $field, int|float $value)
+ * @method static                lte(string $field, int|float $value)
+ * @method static                lessThanOrEqualTo(string $field, int|float $value)
+ * @method static                lessThanOrEquals(string $field, int|float $value)
+ * @method static                greaterThan(string $field, int|float $value)
+ * @method static                gte(string $field, int|float $value)
+ * @method static                greaterThanOrEqualTo(string $field, int|float $value)
+ * @method static                greaterThanOrEquals(string $field, int|float$value)
+ * @method static                between(string $field, array $value)
+ * @method static                dateBetween(string $field,array $value)
+ * @method static                inRadiusFromCoords(string $field, array $coords, int|float $radius, string $unitType = 'km')
+ * @method static                inRadiusFromZip(string $field, string $zip, int|float $radius, string $country, string $unitType = 'km')
+ * @method static                favorite()
+ * @method static                following()
+ * @method static                owner()
+ * @method static                creator()
+ * @method static                tracker(string $interval)
  */
 abstract class AbstractExpression implements FilterInterface, ExpressionInterface
 {
-    /**
-     * @var array
-     */
-    protected $filters = [];
+    protected array $filters = [];
 
-    private ?\Sugarcrm\REST\Endpoint\Data\Filters\Expression\AbstractExpression $parentExpression = null;
+    private AbstractExpression $parentExpression;
 
-    /**
-     * @var array
-     */
-    protected $operators = [
+    protected array $operators = [
         'equals' => Equals::class,
         'notEquals' => NotEquals::class,
         'starts' => Starts::class,
@@ -85,15 +94,20 @@ abstract class AbstractExpression implements FilterInterface, ExpressionInterfac
         'greaterThanOrEquals' => GreaterThanOrEqual::class,
         'between' => Between::class,
         'dateBetween' => DateBetween::class,
+        'inRadiusFromCoords' => InRadiusFromCoords::class,
+        'inRadiusFromZip' => InRadiusFromZip::class,
+        'favorite' => Favorite::class,
+        'following' => Following::class,
+        'owner' => Owner::class,
+        'tracker' => Tracker::class,
+        'creator' => Creator::class,
     ];
 
-    /**
-     * @var array
-     */
-    protected $expressions = [
+    protected array $expressions = [
         'and' => AndExpression::class,
         'or' => OrExpression::class,
         'date' => DateExpression::class,
+        'distance' => DistanceExpression::class,
     ];
 
     /**
@@ -126,7 +140,7 @@ abstract class AbstractExpression implements FilterInterface, ExpressionInterfac
      * Sets Parent Expression to allow for nested tree structure
      * @return $this
      */
-    public function setParentExpression(AbstractExpression $Expression)
+    public function setParentExpression(AbstractExpression $Expression): static
     {
         $this->parentExpression = $Expression;
         return $this;
@@ -156,7 +170,7 @@ abstract class AbstractExpression implements FilterInterface, ExpressionInterfac
     /**
      * @inheritDoc
      */
-    public function clear()
+    public function clear(): static
     {
         $this->filters = [];
         return $this;

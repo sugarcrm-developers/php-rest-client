@@ -24,6 +24,7 @@ use Sugarcrm\REST\Endpoint\Bulk;
 use Sugarcrm\REST\Endpoint\Ping;
 use Sugarcrm\REST\Endpoint\Note;
 use Sugarcrm\REST\Endpoint\Generic;
+use Sugarcrm\REST\Endpoint\Rest;
 use Sugarcrm\REST\Endpoint\Smart;
 
 /**
@@ -159,6 +160,11 @@ class SugarEndpointProvider extends VersionedEndpointProvider
         [
             self::ENDPOINT_NAME => 'integrate',
             self::ENDPOINT_CLASS => Integrate::class,
+            self::ENDPOINT_PROPERTIES => [],
+        ],
+        [
+            self::ENDPOINT_NAME => 'rest',
+            self::ENDPOINT_CLASS => Rest::class,
             self::ENDPOINT_PROPERTIES => [],
         ],
     ];

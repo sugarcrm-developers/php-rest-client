@@ -12,6 +12,4 @@ namespace Sugarcrm\REST\Endpoint\Data\Filters\Operator;
 class Between extends AbstractOperator
 {
     public const OPERATOR = '$between';
-
-    protected static $_OPERATOR = self::OPERATOR;
 }

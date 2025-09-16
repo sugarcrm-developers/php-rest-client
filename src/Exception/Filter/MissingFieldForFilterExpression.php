@@ -11,7 +11,7 @@ use MRussell\REST\Exception\Endpoint\EndpointException;
 /**
  * @package Sugarcrm\REST\Exception\Filter
  */
-class MissingFieldForDateExpression extends EndpointException
+class MissingFieldForFilterExpression extends EndpointException
 {
-    protected $message = 'Field not configured on DateExpression';
+    protected $message = 'Field not configured on Filter Expression';
 }
