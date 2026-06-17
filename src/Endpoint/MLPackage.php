@@ -19,7 +19,7 @@ class MLPackage extends SugarBean
     public const MLP_FIELD_PROP = 'upgrade_zip';
 
     protected static array $_DEFAULT_PROPERTIES = [
-        self::PROPERTY_URL => 'Administration/packages/$id/$:action',
+        self::PROPERTY_URL => 'Administration/packages/$:id/$:action',
         self::PROPERTY_AUTH => true,
     ];
 
