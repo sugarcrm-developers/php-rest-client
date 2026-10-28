@@ -53,7 +53,7 @@ class Integrate extends AbstractSugarBeanEndpoint
         return $this;
     }
 
-    protected function configureSyncKey(string $syncKey = null, string $syncKeyField = null, bool $clearOnChange = false): void
+    protected function configureSyncKey(?string $syncKey = null, ?string $syncKeyField = null, bool $clearOnChange = false): void
     {
         if ($syncKeyField) {
             $this->setSyncKeyField($syncKeyField);
@@ -70,21 +70,21 @@ class Integrate extends AbstractSugarBeanEndpoint
         }
     }
 
-    public function getBySyncKey(string $syncKey = null, string $syncKeyField = null): static
+    public function getBySyncKey(?string $syncKey = null, ?string $syncKeyField = null): static
     {
         $this->configureSyncKey($syncKey, $syncKeyField, true);
         $this->setCurrentAction(self::INTEGRATE_ACTION_RETRIEVE);
         return $this->execute();
     }
 
-    public function setSyncKey(string $syncKey = null, string $syncKeyField = null): static
+    public function setSyncKey(?string $syncKey = null, ?string $syncKeyField = null): static
     {
         $this->configureSyncKey($syncKey, $syncKeyField);
         $this->setCurrentAction(self::INTEGRATE_ACTION_SET_SK);
         return $this->execute();
     }
 
-    public function deleteBySyncKey(string $syncKey = null, string $syncKeyField = null): static
+    public function deleteBySyncKey(?string $syncKey = null, ?string $syncKeyField = null): static
     {
         $this->configureSyncKey($syncKey, $syncKeyField);
         $this->setCurrentAction(self::INTEGRATE_ACTION_DELETE);

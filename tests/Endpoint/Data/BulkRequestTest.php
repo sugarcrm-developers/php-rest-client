@@ -106,7 +106,6 @@ class BulkRequestTest extends TestCase
         $Data = new BulkRequest();
         $ReflectedData = new \ReflectionClass(BulkRequest::class);
         $extractRequest = $ReflectedData->getMethod('extractRequest');
-        $extractRequest->setAccessible(true);
 
         $testBodyData = json_encode(['foo' => 'bar']);
         $Request = new Request("POST", "http://localhost/rest/v11/Accounts", [], $testBodyData);
@@ -122,7 +121,6 @@ class BulkRequestTest extends TestCase
         $Data = new BulkRequest();
         $ReflectedData = new \ReflectionClass(BulkRequest::class);
         $extractRequest = $ReflectedData->getMethod('extractRequest');
-        $extractRequest->setAccessible(true);
 
         $Request = new Request("GET", "http://localhost/rest/v11/Accounts");
         $result = $extractRequest->invoke($Data, $Request);

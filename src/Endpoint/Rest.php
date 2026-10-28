@@ -6,9 +6,6 @@
 
 namespace Sugarcrm\REST\Endpoint;
 
-use GuzzleHttp\Psr7\Request;
-use Sugarcrm\REST\Endpoint\Abstracts\AbstractSugarEndpoint;
-
 /**
  * Generic REST endpoint allowing for querying custom endpoints
  * usage examples:
@@ -35,6 +32,7 @@ class Rest extends Generic
         if (!is_null($data)) {
             $this->setData($data);
         }
+
         return $this->execute();
     }
 
@@ -44,6 +42,7 @@ class Rest extends Generic
         if (!is_null($data)) {
             $this->setData($data);
         }
+
         return $this->execute();
     }
 
@@ -53,6 +52,7 @@ class Rest extends Generic
         if (!is_null($data)) {
             $this->setData($data);
         }
+
         return $this->execute();
     }
 
@@ -68,6 +68,7 @@ class Rest extends Generic
         if (!is_null($data)) {
             $this->setData($data);
         }
+
         return $this->execute();
     }
 

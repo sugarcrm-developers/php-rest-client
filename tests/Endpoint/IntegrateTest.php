@@ -34,7 +34,6 @@ class IntegrateTest extends TestCase
         $endpoint = new Integrate();
         $reflection = new \ReflectionClass($endpoint::class);
         $actions = $reflection->getProperty('_actions');
-        $actions->setAccessible(true);
         $actions = $actions->getValue($endpoint);
         $this->assertEquals([
             Integrate::MODEL_ACTION_RETRIEVE => 'GET',

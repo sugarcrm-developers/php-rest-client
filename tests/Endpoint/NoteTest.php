@@ -50,7 +50,6 @@ class NoteTest extends TestCase
 
         $Reflection = new \ReflectionClass($Note);
         $attachments = $Reflection->getProperty('_attachments');
-        $attachments->setAccessible(true);
         $this->assertEquals([
             'add' => [],
             'delete' => [],
@@ -66,7 +65,6 @@ class NoteTest extends TestCase
             ]],
         ]);
         $hasAttachmentsChanges = $Reflection->getMethod("hasAttachmentsChanges");
-        $hasAttachmentsChanges->setAccessible(true);
         $this->assertTrue($hasAttachmentsChanges->invoke($Note));
         $this->assertEquals($Note, $Note->clear());
         $this->assertFalse($hasAttachmentsChanges->invoke($Note));
@@ -99,7 +97,6 @@ class NoteTest extends TestCase
 
         $Reflection = new \ReflectionClass($Note);
         $parseFiles = $Reflection->getMethod('parseFiles');
-        $parseFiles->setAccessible(true);
         $this->assertEquals([[
             'name' => basename(__FILE__),
             'path' => __FILE__,

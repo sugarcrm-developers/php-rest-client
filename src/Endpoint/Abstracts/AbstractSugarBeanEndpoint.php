@@ -469,10 +469,9 @@ abstract class AbstractSugarBeanEndpoint extends ModelEndpoint implements SugarE
     }
 
     /**
-     * @param string|null $destination
      * @throws GuzzleException
      */
-    public function downloadFile(string $field, string $destination = null): AbstractSugarBeanEndpoint
+    public function downloadFile(string $field, ?string $destination = null): AbstractSugarBeanEndpoint
     {
         $id = $this->get('id');
         if (empty($id) && empty($destination)) {
