@@ -36,7 +36,6 @@ class ModuleLoaderTest extends TestCase
 
         $ReflectionClass = new \ReflectionClass($Packages);
         $filter = $ReflectionClass->getProperty('_filter');
-        $filter->setAccessible(true);
         $this->assertEquals('foo', $filter->getValue($Packages));
         $this->assertEquals([], $Packages->getUrlArgs());
         $Packages->setUrlArgs(['filter' => 'foo']);

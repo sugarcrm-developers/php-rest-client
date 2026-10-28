@@ -72,7 +72,6 @@ class ModuleFilterTest extends TestCase
 
         $Reflection = new \ReflectionClass($ModuleFilter::class);
         $configurePayload = $Reflection->getMethod('configurePayload');
-        $configurePayload->setAccessible(true);
 
         $ModuleFilter->setBaseUrl('http://localhost/rest/v11');
         $ModuleFilter->setModule('Accounts');

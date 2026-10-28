@@ -121,7 +121,6 @@ class AbstractSugarBeanCollectionEndpointTest extends TestCase
         $Endpoint = new SugarBeanCollectionEndpoint();
         $Reflection = new \ReflectionClass(SugarBeanCollectionEndpoint::class);
         $configurePayload = $Reflection->getMethod('configurePayload');
-        $configurePayload->setAccessible(true);
 
         $Endpoint->setOrderBy('foo:DESC');
         $this->assertArrayHasKey('order_by', $configurePayload->invoke($Endpoint, new EndpointData()));
@@ -142,7 +141,6 @@ class AbstractSugarBeanCollectionEndpointTest extends TestCase
         $Endpoint = new SugarBeanCollectionEndpoint();
         $Reflection = new \ReflectionClass(SugarBeanCollectionEndpoint::class);
         $configureURL = $Reflection->getMethod('configureURL');
-        $configureURL->setAccessible(true);
 
         $Endpoint->setProperty('url', '$module/list');
         $Endpoint->setModule('Accounts');
@@ -158,7 +156,6 @@ class AbstractSugarBeanCollectionEndpointTest extends TestCase
         $Endpoint = new SugarBeanCollectionEndpoint();
         $Reflection = new \ReflectionClass($Endpoint::class);
         $buildModel = $Reflection->getMethod('buildModel');
-        $buildModel->setAccessible(true);
 
         $Endpoint->setModule('Accounts');
 

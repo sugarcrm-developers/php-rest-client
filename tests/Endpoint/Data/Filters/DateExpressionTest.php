@@ -50,7 +50,6 @@ class DateExpressionTest extends TestCase
         $Reflection = new \ReflectionClass($Date::class);
         $dateField = $Reflection->getProperty('dateField');
 
-        $dateField->setAccessible(true);
 
         $this->assertEquals('test', $dateField->getValue($Date));
         $Date = new DateExpression();

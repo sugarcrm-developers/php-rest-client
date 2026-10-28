@@ -67,7 +67,6 @@ class SugarOAuthControllerTest extends TestCase
         $Auth->setLogger($Logger);
         $Reflected = new \ReflectionClass($Auth);
         $generateUniqueCacheString = $Reflected->getMethod('generateUniqueCacheString');
-        $generateUniqueCacheString->setAccessible(true);
 
         $this->assertEquals("client_id_base_username", $generateUniqueCacheString->invoke($Auth, [
             'client_id' => 'client_id',
