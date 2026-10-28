@@ -93,7 +93,6 @@ class FilterDataTest extends TestCase
         $Filter = new FilterData();
         $ReflectedFilter = new \ReflectionClass(FilterData::class);
         $endpoint = $ReflectedFilter->getProperty('endpoint');
-        $endpoint->setAccessible(true);
         $this->assertEmpty($endpoint->getValue($Filter));
         $Endpoint = new ModuleFilter();
         $Filter->setEndpoint($Endpoint);

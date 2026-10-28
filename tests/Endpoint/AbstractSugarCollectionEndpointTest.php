@@ -74,7 +74,6 @@ class AbstractSugarCollectionEndpointTest extends TestCase
         $Endpoint = new SugarCollectionEndpoint();
         $Reflection = new \ReflectionClass(SugarCollectionEndpoint::class);
         $configurePayload = $Reflection->getMethod('configurePayload');
-        $configurePayload->setAccessible(true);
         $this->assertEquals([
             'offset' => 0,
             'max_num' => 50,
@@ -95,7 +94,6 @@ class AbstractSugarCollectionEndpointTest extends TestCase
 
         $Reflect = new \ReflectionClass($Endpoint);
         $nextOffset = $Reflect->getProperty('_next_offset');
-        $nextOffset->setAccessible(true);
 
         $Client->mockResponses->append(new Response(200, [], \json_encode(['next_offset' => 50])));
         $this->assertEquals($Endpoint, $Endpoint->fetch());

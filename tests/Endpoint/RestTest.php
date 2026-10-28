@@ -4,7 +4,6 @@ namespace Sugarcrm\REST\Tests\Endpoint;
 
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request;
 use Sugarcrm\REST\Endpoint\Rest;
 use Sugarcrm\REST\Tests\Stubs\Client\Client;
 
@@ -18,24 +17,26 @@ class RestTest extends TestCase
         parent::setUp();
     }
 
-    public function testGetRequestToCustomEndpoint()
+    public function testGetRequestToCustomEndpoint(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = $this->client->rest('custom/endpoint');
         $rest->setBaseUrl('http://localhost/rest/v11');
         $rest->get(['foo' => 'bar']);
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('http://localhost/rest/v11/custom/endpoint?foo=bar', (string) $request->getUri());
         $this->assertStringContainsString('foo=bar', (string) $request->getUri()->getQuery());
     }
 
-    public function testPostRequestWithData()
+    public function testPostRequestWithData(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = new Rest([], ['custom/endpoint']);
         $rest->setClient($this->client);
         $rest->setBaseUrl('http://localhost/rest/v11');
+
         $data = ['foo' => 'bar', 'baz' => 'qux'];
         $rest->post($data);
         $request = $this->client->mockResponses->getLastRequest();
@@ -45,12 +46,13 @@ class RestTest extends TestCase
         $this->assertEquals($data, $body);
     }
 
-    public function testPutRequestWithData()
+    public function testPutRequestWithData(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = new Rest([], ['custom/endpoint']);
         $rest->setClient($this->client);
         $rest->setBaseUrl('http://localhost/rest/v11');
+
         $data = ['foo' => 'bar'];
         $rest->put($data);
         $request = $this->client->mockResponses->getLastRequest();
@@ -59,12 +61,13 @@ class RestTest extends TestCase
         $this->assertEquals($data, $body);
     }
 
-    public function testPatchRequestWithData()
+    public function testPatchRequestWithData(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = new Rest([], ['custom/endpoint']);
         $rest->setClient($this->client);
         $rest->setBaseUrl('http://localhost/rest/v11');
+
         $data = ['foo' => 'bar'];
         $rest->patch($data);
         $request = $this->client->mockResponses->getLastRequest();
@@ -73,30 +76,32 @@ class RestTest extends TestCase
         $this->assertEquals($data, $body);
     }
 
-    public function testDeleteRequest()
+    public function testDeleteRequest(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = $this->client->rest('custom/endpoint');
         $rest->setBaseUrl('http://localhost/rest/v11');
         $rest->delete();
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertEquals('DELETE', $request->getMethod());
         $this->assertEquals('http://localhost/rest/v11/custom/endpoint', (string) $request->getUri());
     }
 
-    public function testAddCustomHeader()
+    public function testAddCustomHeader(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = $this->client->rest('custom/endpoint');
         $rest->setBaseUrl('http://localhost/rest/v11');
         $rest->addCustomHeader('X-Test-Header', 'value1');
         $rest->get();
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertTrue($request->hasHeader('X-Test-Header'));
         $this->assertEquals(['value1'], $request->getHeader('X-Test-Header'));
     }
 
-    public function testRemoveCustomHeader()
+    public function testRemoveCustomHeader(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = $this->client->rest('custom/endpoint');
@@ -104,11 +109,12 @@ class RestTest extends TestCase
         $rest->addCustomHeader('X-Test-Header', 'value1');
         $rest->removeCustomHeader('X-Test-Header');
         $rest->get();
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertFalse($request->hasHeader('X-Test-Header'));
     }
 
-    public function testMultipleCustomHeaders()
+    public function testMultipleCustomHeaders(): void
     {
         $this->client->mockResponses->append(new Response(200, [], 'OK'));
         $rest = $this->client->rest('custom/endpoint');
@@ -116,6 +122,7 @@ class RestTest extends TestCase
         $rest->addCustomHeader('X-Test-Header', 'value1');
         $rest->addCustomHeader('Another-Header', 'value2');
         $rest->get();
+
         $request = $this->client->mockResponses->getLastRequest();
         $this->assertTrue($request->hasHeader('X-Test-Header'));
         $this->assertEquals(['value1'], $request->getHeader('X-Test-Header'));

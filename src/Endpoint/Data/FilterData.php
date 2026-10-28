@@ -36,7 +36,7 @@ class FilterData extends AbstractExpression implements DataInterface
 
 
     //Overloads
-    public function __construct(AbstractSmartEndpoint $Endpoint = null)
+    public function __construct(?AbstractSmartEndpoint $Endpoint = null)
     {
         if ($Endpoint instanceof AbstractSmartEndpoint) {
             $this->setEndpoint($Endpoint);

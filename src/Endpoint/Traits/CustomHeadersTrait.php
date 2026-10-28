@@ -10,8 +10,6 @@ trait CustomHeadersTrait
 
     /**
      * Set a custom header to be sent with the request
-     * @param string $name
-     * @param string $value
      * @return $this
      */
     public function addCustomHeader(string $name, string $value): static
@@ -23,7 +21,6 @@ trait CustomHeadersTrait
 
     /**
      * Remove a custom header from the request
-     * @param string $name
      * @return $this
      */
     public function removeCustomHeader(string $name): static
@@ -32,16 +29,18 @@ trait CustomHeadersTrait
         if (isset($this->customHeaders[$normalized])) {
             unset($this->customHeaders[$normalized]);
         }
+
         return $this;
     }
 
     protected function addCustomHeadersToRequest(Request $request): Request
     {
         if (!empty($this->customHeaders)) {
-            foreach ($this->customHeaders as $headerNormalized => $values) {
+            foreach ($this->customHeaders as $values) {
                 $request = $request->withHeader($values[0], $values[1]);
             }
         }
+
         return $request;
     }
 }

@@ -153,7 +153,6 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
         $Reflection = new \ReflectionClass($Bean);
         $configureFieldsDataProps = $Reflection->getMethod('configureFieldsDataProps');
-        $configureFieldsDataProps->setAccessible(true);
         $this->assertEquals([
             'fields' => "id,deleted,date_modified,foobar",
             'view' => 'record',
@@ -346,7 +345,6 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
         $ReflectedBean = new \ReflectionClass(SugarBean::class);
         $configureUrl = $ReflectedBean->getMethod('configureURL');
-        $configureUrl->setAccessible(true);
 
         $Bean->setCurrentAction(SugarBean::MODEL_ACTION_RETRIEVE);
         $this->assertEquals('Foo/bar', $configureUrl->invoke($Bean, $Bean->getUrlArgs()));
@@ -419,7 +417,6 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
         $ReflectedBean = new \ReflectionClass(SugarBean::class);
         $configureAction = $ReflectedBean->getMethod('configureAction');
-        $configureAction->setAccessible(true);
 
         $Bean->setUrlArgs(['Test', '1234']);
         $configureAction->invoke($Bean, SugarBean::BEAN_ACTION_RELATE, ['foo', 'bar']);
@@ -545,7 +542,6 @@ class AbstractSugarBeanEndpointTest extends TestCase
         $Bean->setCurrentAction(SugarBean::BEAN_ACTION_FAVORITE);
         $Reflection = new \ReflectionClass(SugarBean::class);
         $setResponse = $Reflection->getMethod('setResponse');
-        $setResponse->setAccessible(true);
         $setResponse->invoke($Bean, $response);
         $this->assertEquals([
             'foo' => 'bar',
@@ -592,10 +588,8 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
         $ReflectedEndpoint = new \ReflectionClass($Bean::class);
         $deleteFileOnFail = $ReflectedEndpoint->getProperty('_deleteFileOnFail');
-        $deleteFileOnFail->setAccessible(true);
 
         $configureFileUploadData = $ReflectedEndpoint->getMethod('configureFileUploadQueryParams');
-        $configureFileUploadData->setAccessible(true);
 
         $data = $configureFileUploadData->invoke($Bean);
         $this->assertEquals([
@@ -639,13 +633,10 @@ class AbstractSugarBeanEndpointTest extends TestCase
 
         $Reflection = new \ReflectionClass($Bean);
         $_upload = $Reflection->getProperty('_upload');
-        $_upload->setAccessible(true);
 
         $_file = $Reflection->getProperty('_uploadFile');
-        $_file->setAccessible(true);
 
         $setFileMethod = $Reflection->getMethod('setFile');
-        $setFileMethod->setAccessible(true);
 
         $setFileMethod->invoke($Bean, 'filename', __FILE__);
         $this->assertEquals([
