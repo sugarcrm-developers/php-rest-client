@@ -14,6 +14,15 @@ Add to any project using composer:
 }
 ```
 
+### TLS certificate verification
+TLS certificates are verified by default. To disable verification for a local development instance only, pass `false` as the third constructor argument. To trust a custom CA bundle, pass its file path:
+```php
+$client = new \Sugarcrm\REST\Client\SugarApi($server, $credentials);                 // verifies (default)
+$client = new \Sugarcrm\REST\Client\SugarApi($server, $credentials, false);          // verification off (dev only)
+$client = new \Sugarcrm\REST\Client\SugarApi($server, $credentials, '/path/ca.pem'); // custom CA bundle
+```
+Existing instances can use `setVerifyTls()` / `getVerifyTls()`.
+
 __Check out the [Wiki](https://github.com/sugarcrm-developers/php-rest-client/wiki)__ for detailed information on 
 * Installation
 * Usage

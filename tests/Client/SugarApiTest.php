@@ -104,6 +104,36 @@ class SugarApiTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::setVerifyTls
+     * @covers ::getVerifyTls
+     * @covers ::initHttpClient
+     */
+    public function testVerifyTls(): void
+    {
+        //Verification is on by default
+        $Client = new SugarApi('localhost');
+        $this->assertTrue($Client->getVerifyTls());
+        $this->assertTrue($Client->getHttpClient()->getConfig('verify'));
+
+        //Opt-out per instance via constructor
+        $Client = new SugarApi('localhost', [], false);
+        $this->assertFalse($Client->getVerifyTls());
+        $this->assertFalse($Client->getHttpClient()->getConfig('verify'));
+
+        //Custom CA bundle path
+        $Client = new SugarApi('localhost', [], '/etc/ssl/custom-ca.pem');
+        $this->assertEquals('/etc/ssl/custom-ca.pem', $Client->getVerifyTls());
+        $this->assertEquals('/etc/ssl/custom-ca.pem', $Client->getHttpClient()->getConfig('verify'));
+
+        //Toggle after construction rebuilds the HTTP client
+        $this->assertEquals($Client, $Client->setVerifyTls(false));
+        $this->assertFalse($Client->getHttpClient()->getConfig('verify'));
+        $Client->setVerifyTls(true);
+        $this->assertTrue($Client->getHttpClient()->getConfig('verify'));
+    }
+
+    /**
      * @covers ::setPlatform
      * @covers ::setRawPlatform
      * @covers ::getPlatform
