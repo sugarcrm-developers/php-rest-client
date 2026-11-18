@@ -73,6 +73,14 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
     protected string $version = self::API_VERSION;
 
     /**
+     * TLS certificate verification for HTTP requests.
+     * true (default) verifies against the system CA bundle, false disables verification (local development only),
+     * and a string is treated as the path to a custom CA bundle.
+     * @var bool|string
+     */
+    protected bool|string $verifyTls = true;
+
+    /**
      * @var SugarOAuthController
      */
     protected AuthControllerInterface $auth;
@@ -95,9 +103,16 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
         return $url;
     }
 
-    public function __construct($server = '', array $credentials = [])
+    /**
+     * @param string|array $server
+     * @param array $credentials
+     * @param bool|string $verifyTls Verify TLS certificates (default true). Pass false to disable for local development only,
+     *                               or a path to a CA bundle.
+     */
+    public function __construct($server = '', array $credentials = [], bool|string $verifyTls = true)
     {
         parent::__construct();
+        $this->setVerifyTls($verifyTls);
         $this->init();
         if (empty($server) && !empty($this->server)) {
             $server = $this->getServer();
@@ -115,7 +130,29 @@ class SugarApi extends AbstractClient implements PlatformAwareInterface
 
     protected function initHttpClient(): void
     {
-        $this->httpClient = new Client(['handler' => $this->getHandlerStack(),'verify' => false]);
+        $this->httpClient = new Client([
+            'handler' => $this->getHandlerStack(),
+            'verify' => $this->verifyTls,
+        ]);
+    }
+
+    /**
+     * Set TLS certificate verification for this client instance.
+     * @param bool|string $verify true to verify (default), false to disable (local development only), or a CA bundle path
+     */
+    public function setVerifyTls(bool|string $verify): static
+    {
+        $this->verifyTls = $verify;
+        $this->initHttpClient();
+        return $this;
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getVerifyTls(): bool|string
+    {
+        return $this->verifyTls;
     }
 
     /**
